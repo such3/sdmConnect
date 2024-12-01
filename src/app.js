@@ -34,15 +34,13 @@ app.use(
 );
 
 // Security middlewares
-app.use(helmet());
-
 app.use((req, res, next) => {
   res.setHeader(
     "Content-Security-Policy",
     "default-src 'self'; " +
       "img-src 'self' *; " + // Allow images from any source
-      "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; " + // Allow external scripts from jsdelivr CDN
-      "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; " + // Allow external styles from jsdelivr CDN
+      "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://cdnjs.cloudflare.com; " + // Allow external scripts from jsdelivr, tailwindcss CDN, and cloudflare CDN
+      "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://img.icons8.com; " + // Allow external styles from jsdelivr, cloudflare CDN, and img.icons8
       "font-src 'self' https://fonts.gstatic.com; " + // Allow Google Fonts
       "connect-src 'self'; " + // Allow connections to self (for AJAX or WebSockets)
       "frame-src 'none';" // Disallow embedding content in frames

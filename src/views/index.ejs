@@ -1,5 +1,6 @@
 <!-- index.ejs -->
 <%- include('partials/header') %>
+<script src="/scripts/common.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 <!-- Hero Section -->
 <section id="home" class="relative overflow-hidden bg-gray-900">
@@ -113,8 +114,8 @@
           alt="Team Member 1"
           class="w-32 h-32 rounded-full mx-auto mb-4"
         />
-        <h3 class="text-xl font-semibold">John Doe</h3>
-        <p class="text-gray-400">CEO & Founder</p>
+        <h3 class="text-xl font-semibold">Sucheendra</h3>
+        <p class="text-gray-400">Developer</p>
       </div>
       <!-- Team Member 2 -->
       <div class="card bg-gray-700 text-white p-6 rounded-lg shadow-lg">
@@ -123,8 +124,8 @@
           alt="Team Member 2"
           class="w-32 h-32 rounded-full mx-auto mb-4"
         />
-        <h3 class="text-xl font-semibold">Jane Smith</h3>
-        <p class="text-gray-400">Lead Developer</p>
+        <h3 class="text-xl font-semibold">Tejas</h3>
+        <p class="text-gray-400">Developer</p>
       </div>
       <!-- Team Member 3 -->
       <div class="card bg-gray-700 text-white p-6 rounded-lg shadow-lg">
@@ -133,8 +134,8 @@
           alt="Team Member 3"
           class="w-32 h-32 rounded-full mx-auto mb-4"
         />
-        <h3 class="text-xl font-semibold">Alice Johnson</h3>
-        <p class="text-gray-400">Project Manager</p>
+        <h3 class="text-xl font-semibold">Sharat</h3>
+        <p class="text-gray-400">Developer</p>
       </div>
       <!-- Team Member 4 -->
       <div class="card bg-gray-700 text-white p-6 rounded-lg shadow-lg">
@@ -143,8 +144,8 @@
           alt="Team Member 4"
           class="w-32 h-32 rounded-full mx-auto mb-4"
         />
-        <h3 class="text-xl font-semibold">David Lee</h3>
-        <p class="text-gray-400">Designer</p>
+        <h3 class="text-xl font-semibold">Tony Praveen</h3>
+        <p class="text-gray-400">Developer</p>
       </div>
     </div>
   </div>
@@ -206,5 +207,13 @@
     </form>
   </div>
 </section>
+<script>
+  const menuToggle = document.getElementById("menu-toggle");
+  const mobileMenu = document.getElementById("mobile-menu");
+
+  menuToggle.addEventListener("click", () => {
+    mobileMenu.classList.toggle("hidden");
+  });
+</script>
 
 <%- include('partials/footer') %>
