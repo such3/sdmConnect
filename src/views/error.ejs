@@ -1,0 +1,25 @@
+<%- include('../partials/header') %>
+
+<section class="py-16 bg-gray-800">
+  <div class="max-w-md mx-auto bg-gray-700 p-12 rounded-lg shadow-xl">
+    <h2 class="text-3xl font-bold text-white mb-8 text-center">
+      Oops! Something went wrong
+    </h2>
+
+    <!-- Error Block -->
+    <div class="text-red-500 mb-4 text-center"><%= error %></div>
+
+    <!-- Go Back Button -->
+    <div class="text-center">
+      <a href="/login" class="text-blue-400 hover:underline"
+        >Go back to Login</a
+      >
+      or
+      <a href="/register" class="text-blue-400 hover:underline"
+        >Register a new account</a
+      >
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,224 @@
+ <link rel="stylesheet" href="/styles/dist-1.css">
+ <!-- Navbar -->
+ <nav class="bg-gray-800 p-6">
+    <div class="main-container flex justify-between items-center">
+      <a href="#" class="text-white text-3xl font-bold">User Profile</a>
+      <ul>
+        <li><a href="/">Home</a></li>
+      </ul>
+    </div>
+    
+  </nav>
+
+  <!-- Profile Section -->
+  <section class="py-16 px-8">
+    <div class="max-w-7xl mx-auto">
+      <!-- Profile Header -->
+      <div class="flex items-center space-x-6 mb-10">
+        <img
+          src="https://res.cloudinary.com/deqebnjww/image/upload/v1732557324/illqlsgsqq085bmff77f.avif"
+          alt="User Avatar"
+          class="w-24 h-24 rounded-full"
+        />
+        <div>
+          <h2 class="text-3xl font-semibold">Dhruva Kumar</h2>
+          <p class="text-gray-400">@dhruva</p>
+          <button
+            id="editProfileBtn"
+            class="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+          >
+            Edit Profile
+          </button>
+        </div>
+      </div>
+
+      <!-- Profile Bio -->
+      <div class="mb-10">
+        <h3 class="text-xl font-semibold mb-4">Bio</h3>
+        <p id="userBio" class="text-gray-400">
+          A passionate developer and contributor.
+        </p>
+      </div>
+
+      <!-- Resources Section -->
+      <div>
+        <h3 class="text-2xl font-semibold mb-4">Resources Uploaded</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Resource Card 1 -->
+          <div class="card bg-gray-700 shadow-xl p-6">
+            <h4 class="font-semibold text-xl mb-2">Resource 1</h4>
+            <p class="text-gray-400 mb-4">Description of Resource 1</p>
+            <a href="#" class="text-blue-500 hover:underline"
+              >View Resource</a
+            >
+            <div class="mt-4 flex space-x-4">
+              <button
+                class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+                id="editResourceBtn1"
+              >
+                Edit
+              </button>
+              <button
+                class="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+          <!-- Resource Card 2 -->
+          <div class="card bg-gray-700 shadow-xl p-6">
+            <h4 class="font-semibold text-xl mb-2">Resource 2</h4>
+            <p class="text-gray-400 mb-4">Description of Resource 2</p>
+            <a href="#" class="text-blue-500 hover:underline"
+              >View Resource</a
+            >
+            <div class="mt-4 flex space-x-4">
+              <button
+                class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+                id="editResourceBtn2"
+              >
+                Edit
+              </button>
+              <button
+                class="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+          <!-- Resource Card 3 -->
+          <div class="card bg-gray-700 shadow-xl p-6">
+            <h4 class="font-semibold text-xl mb-2">Resource 3</h4>
+            <p class="text-gray-400 mb-4">Description of Resource 3</p>
+            <a href="#" class="text-blue-500 hover:underline"
+              >View Resource</a
+            >
+            <div class="mt-4 flex space-x-4">
+              <button
+                class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+                id="editResourceBtn3"
+              >
+                Edit
+              </button>
+              <button
+                class="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Edit Profile Modal -->
+  <div
+    id="editProfileModal"
+    class="fixed inset-0 bg-gray-800 bg-opacity-75 hidden justify-center items-center"
+  >
+    <div class="bg-gray-700 p-6 rounded-lg w-96">
+      <h3 class="text-2xl font-semibold mb-4">Edit Profile</h3>
+      <form id="editProfileForm">
+        <div class="mb-4">
+          <label for="fullName" class="block text-gray-400">Full Name</label>
+          <input
+            type="text"
+            id="fullName"
+            class="w-full p-2 mt-2 text-gray-800 rounded"
+            value="Dhruva Kumar"
+            required
+          />
+        </div>
+        <div class="mb-4">
+          <label for="bio" class="block text-gray-400">Bio</label>
+          <textarea
+            id="bio"
+            class="w-full p-2 mt-2 text-gray-800 rounded"
+            required
+          >
+A passionate developer and contributor.</textarea
+          >
+        </div>
+        <div class="flex justify-between">
+          <button
+            type="submit"
+            class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+          >
+            Save
+          </button>
+          <button
+            type="button"
+            id="closeProfileModal"
+            class="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Resource Modal -->
+  <div
+    id="editResourceModal"
+    class="fixed inset-0 bg-gray-800 bg-opacity-75 hidden justify-center items-center"
+  >
+    <div class="bg-gray-700 p-6 rounded-lg w-96">
+      <h3 class="text-2xl font-semibold mb-4">Edit Resource</h3>
+      <form id="editResourceForm">
+        <div class="mb-4">
+          <label for="resourceTitle" class="block text-gray-400"
+            >Resource Title</label
+          >
+          <input
+            type="text"
+            id="resourceTitle"
+            class="w-full p-2 mt-2 text-gray-800 rounded"
+            value="Resource 1"
+            required
+          />
+        </div>
+        <div class="mb-4">
+          <label for="resourceDescription" class="block text-gray-400"
+            >Resource Description</label
+          >
+          <textarea
+            id="resourceDescription"
+            class="w-full p-2 mt-2 text-gray-800 rounded"
+            required
+          >
+Description of Resource 1</textarea
+          >
+        </div>
+        <div class="mb-4">
+          <label for="resourceUrl" class="block text-gray-400"
+            >Resource URL</label
+          >
+          <input
+            type="url"
+            id="resourceUrl"
+            class="w-full p-2 mt-2 text-gray-800 rounded"
+            value="https://example.com/resource"
+            required
+          />
+        </div>
+        <div class="flex justify-between">
+          <button
+            type="submit"
+            class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+          >
+            Save
+          </button>
+          <button
+            type="button"
+            id="closeResourceModal"
+            class="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script src="/scripts/user-script.js"></script>

@@ -1,0 +1,210 @@
+<!-- index.ejs -->
+<%- include('partials/header') %>
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Hero Section -->
+<section id="home" class="relative overflow-hidden bg-gray-900">
+  <!-- Background Overlay -->
+  <div
+    class="absolute inset-0 bg-gradient-to-r from-indigo-800 to-purple-900 opacity-70"
+  ></div>
+
+  <div class="relative z-10 text-center px-6 py-24 md:py-36">
+    <!-- Main Content -->
+    <div class="max-w-5xl mx-auto">
+      <h1
+        class="text-3xl md:text-4xl font-semibold text-white leading-tight mb-6"
+      >
+        Unlock the Future of Digital Innovation with
+        <span class="text-indigo-400">sdmConnect</span>
+      </h1>
+      <p class="text-lg md:text-xl font-light text-white opacity-90 mb-8">
+        Empowering professionals with innovative solutions and a collaborative
+        ecosystem to <span class="text-purple-700">accelerate</span> growth.
+      </p>
+      <a
+        href="/pages/register"
+        class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-5 text-lg font-semibold rounded-xl shadow-lg transition-all duration-300 transform hover:translate-y-1 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
+      >
+        Register Now
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- About Section -->
+<section id="about" class="py-16 bg-gray-800">
+  <div class="main-container text-center">
+    <h2 class="text-4xl font-bold mb-8">About Us</h2>
+    <p class="text-lg mb-6">
+      We are a team of passionate individuals committed to delivering the best
+      experiences for our clients. Our goal is to create innovative solutions
+      that meet your needs and exceed your expectations.
+    </p>
+    <img
+      src="/assets/images/placeholder.jpg"
+      alt="About Us"
+      class="mx-auto rounded-lg shadow-lg"
+    />
+  </div>
+</section>
+
+<!-- Our Features Section -->
+<section id="features" class="py-16 bg-gray-700">
+  <div class="main-container text-center">
+    <h2 class="text-4xl font-bold text-white mb-8">Our Features</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Feature 1 -->
+      <div class="card bg-gray-800 text-white p-6 rounded-lg shadow-lg">
+        <div class="text-blue-400 mb-4">
+          <img
+            src="/icons/fast-icon.png"
+            alt="Feature 1"
+            class="w-12 h-12 mx-auto"
+          />
+        </div>
+        <h3 class="text-xl font-semibold">Fast & Reliable</h3>
+        <p class="text-gray-400">
+          We ensure the fastest and most reliable services to meet your demands.
+        </p>
+      </div>
+      <!-- Feature 2 -->
+      <div class="card bg-gray-800 text-white p-6 rounded-lg shadow-lg">
+        <div class="text-blue-400 mb-4">
+          <img
+            src="/icons/custom-icon.png"
+            alt="Feature 2"
+            class="w-12 h-12 mx-auto"
+          />
+        </div>
+        <h3 class="text-xl font-semibold">Custom Solutions</h3>
+        <p class="text-gray-400">
+          Tailored services designed specifically for your needs and business
+          goals.
+        </p>
+      </div>
+      <!-- Feature 3 -->
+      <div class="card bg-gray-800 text-white p-6 rounded-lg shadow-lg">
+        <div class="text-blue-400 mb-4">
+          <img
+            src="/icons/global-icon.png"
+            alt="Feature 3"
+            class="w-12 h-12 mx-auto"
+          />
+        </div>
+        <h3 class="text-xl font-semibold">Global Reach</h3>
+        <p class="text-gray-400">
+          Our solutions are designed to help you reach a global audience
+          effectively.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Our Team Section -->
+<section id="team" class="py-16 bg-gray-800">
+  <div class="main-container text-center">
+    <h2 class="text-4xl font-bold text-white mb-8">Meet Our Team</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+      <!-- Team Member 1 -->
+      <div class="card bg-gray-700 text-white p-6 rounded-lg shadow-lg">
+        <img
+          src="/assets/images/profile.png"
+          alt="Team Member 1"
+          class="w-32 h-32 rounded-full mx-auto mb-4"
+        />
+        <h3 class="text-xl font-semibold">John Doe</h3>
+        <p class="text-gray-400">CEO & Founder</p>
+      </div>
+      <!-- Team Member 2 -->
+      <div class="card bg-gray-700 text-white p-6 rounded-lg shadow-lg">
+        <img
+          src="/assets/images/profile.png"
+          alt="Team Member 2"
+          class="w-32 h-32 rounded-full mx-auto mb-4"
+        />
+        <h3 class="text-xl font-semibold">Jane Smith</h3>
+        <p class="text-gray-400">Lead Developer</p>
+      </div>
+      <!-- Team Member 3 -->
+      <div class="card bg-gray-700 text-white p-6 rounded-lg shadow-lg">
+        <img
+          src="/assets/images/profile.png"
+          alt="Team Member 3"
+          class="w-32 h-32 rounded-full mx-auto mb-4"
+        />
+        <h3 class="text-xl font-semibold">Alice Johnson</h3>
+        <p class="text-gray-400">Project Manager</p>
+      </div>
+      <!-- Team Member 4 -->
+      <div class="card bg-gray-700 text-white p-6 rounded-lg shadow-lg">
+        <img
+          src="/assets/images/profile.png"
+          alt="Team Member 4"
+          class="w-32 h-32 rounded-full mx-auto mb-4"
+        />
+        <h3 class="text-xl font-semibold">David Lee</h3>
+        <p class="text-gray-400">Designer</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact Form -->
+<section class="py-16 bg-gray-800">
+  <div class="max-w-3xl mx-auto bg-gray-700 p-12 rounded-lg shadow-xl">
+    <h2 class="text-3xl font-bold text-white mb-8 text-center">Contact Us</h2>
+    <form action="#" method="POST" class="space-y-6">
+      <!-- Name Field -->
+      <div class="space-y-2">
+        <label for="name" class="text-lg text-gray-300">Full Name</label>
+        <input
+          type="text"
+          name="name"
+          placeholder="Full Name"
+          id="name"
+          class="input input-bordered w-full text-white bg-gray-600 rounded-lg p-4 focus:ring-2 focus:ring-blue-500 transition ease-in-out duration-300"
+          required
+        />
+      </div>
+
+      <!-- Email Field -->
+      <div class="space-y-2">
+        <label for="email" class="text-lg text-gray-300">Email</label>
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          id="email"
+          class="input input-bordered w-full text-white bg-gray-600 rounded-lg p-4 focus:ring-2 focus:ring-blue-500 transition ease-in-out duration-300"
+          required
+        />
+      </div>
+
+      <!-- Message Field -->
+      <div class="space-y-2">
+        <label for="message" class="text-lg text-gray-300">Message</label>
+        <textarea
+          name="message"
+          placeholder="Your message"
+          id="message"
+          class="textarea textarea-bordered w-full text-white bg-gray-600 rounded-lg p-4 focus:ring-2 focus:ring-blue-500 transition ease-in-out duration-300"
+          rows="5"
+          required
+        ></textarea>
+      </div>
+
+      <!-- Submit Button -->
+      <div>
+        <button
+          type="submit"
+          class="btn btn-primary w-full py-3 text-lg rounded-lg bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition ease-in-out duration-300"
+        >
+          Send Message
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

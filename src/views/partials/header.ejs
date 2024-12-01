@@ -1,0 +1,114 @@
+<!-- header.ejs -->
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>sdmConnect</title>
+
+    <!-- Tailwind CSS CDN -->
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+
+    <!-- DaisyUI CDN -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/daisyui@2.50.0/dist/full.js"></script> -->
+    <link rel="stylesheet" href="/styles/dist-1.css" />
+    <link rel="stylesheet" href="/styles/basic.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/scripts/common.js"></script>
+
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="img-src 'self' data: https://res.cloudinary.com;"
+    />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/notyf/3.10.0/notyf.min.js"
+      integrity="sha512-467grL09I/ffq86LVdwDzi86uaxuAhFZyjC99D6CC1vghMp1YAs+DqCgRvhEtZIKX+o9lR0F2bro6qniyeCMEQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/notyf/3.10.0/notyf.min.css"
+      integrity="sha512-ZX18S8AwqoIm9QCd1EYun82IryFikdJt7lxj6583zx5Rvr5HoreO9tWY6f2VhSxvK+48vYFSf4zFtX/t2ge62g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <!-- Icons8 CDN (for icons) -->
+    <link href="https://img.icons8.com" rel="stylesheet" />
+
+    <style>
+      /* Ensure there's no default margin/padding for the body and html */
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+      }
+
+      /* Apply proper margin and padding around the body */
+      .main-container {
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 1200px;
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+    </style>
+  </head>
+
+  <body class="bg-gray-900 text-white dark:bg-gray-900 dark:text-white">
+    <!-- Navbar -->
+    <nav class="bg-gray-800 p-4">
+      <div class="main-container flex justify-between items-center">
+        <a href="#" class="text-2xl font-semibold">sdmConnect</a>
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex space-x-6">
+          <a href="/" class="text-white hover:text-blue-400">Home</a>
+          <a href="#about" class="text-white hover:text-blue-400">About</a>
+          <a href="#features" class="text-white hover:text-blue-400"
+            >Features</a
+          >
+          <a href="#team" class="text-white hover:text-blue-400">Team</a>
+          <a href="#contact" class="text-white hover:text-blue-400">Contact</a>
+        </div>
+
+        <!-- Hamburger Menu -->
+        <div class="md:hidden">
+          <button class="btn btn-ghost text-white" id="menu-toggle">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              ></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div class="md:hidden hidden" id="mobile-menu">
+        <div class="p-4 space-y-2">
+          <a href="#home" class="block text-white hover:text-blue-400">Home</a>
+          <a href="#about" class="block text-white hover:text-blue-400"
+            >About</a
+          >
+          <a href="#features" class="block text-white hover:text-blue-400"
+            >Features</a
+          >
+          <a href="#team" class="block text-white hover:text-blue-400">Team</a>
+          <a href="#contact" class="block text-white hover:text-blue-400"
+            >Contact</a
+          >
+        </div>
+      </div>
+    </nav>
+  </body>
+</html>

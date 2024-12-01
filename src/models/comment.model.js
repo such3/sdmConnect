@@ -1,16 +1,16 @@
 import mongoose from "mongoose";
+import dbErrorHandler from "../utils/dbErrorHandler.js"; // Import error handler
 
-// Define the schema for a Comment
 const commentSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // Reference to the User model
+      ref: "User",
       required: true,
     },
     resource: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Resource", // Reference to the Resource model
+      ref: "Resource",
       required: true,
     },
     comment: {
@@ -22,10 +22,14 @@ const commentSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true, // To track when the comment was created and updated
+    timestamps: true,
   }
 );
 
-const Comment = mongoose.model("Comment", commentSchema);
+// Error handling middleware for MongoDB errors
+commentSchema.post("save", function (error, doc, next) {
+  const err = dbErrorHandler(error); // Use the error handler utility
+  next(err);
+});
 
-export { Comment };
+export const Comment = mongoose.model("Comment", commentSchema);

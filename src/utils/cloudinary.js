@@ -28,10 +28,14 @@ const uploadOnCloudinary = async (localFilePath) => {
     // Log the full response for debugging (including the URL)
     console.log("Cloudinary upload response:", response);
 
-    // Remove the file from the local server
-    fs.unlinkSync(localFilePath); // Use unlinkSync for now, but can switch to async for production
-
-    console.log(`File uploaded and local file removed: ${localFilePath}`);
+    // Remove the file from the local server asynchronously
+    fs.unlink(localFilePath, (err) => {
+      if (err) {
+        console.error("Error removing the local file:", err);
+      } else {
+        console.log(`Local file removed: ${localFilePath}`);
+      }
+    });
 
     // Return the Cloudinary response
     return response;
@@ -42,8 +46,13 @@ const uploadOnCloudinary = async (localFilePath) => {
     // Check if the file exists before attempting to remove it
     if (localFilePath && fs.existsSync(localFilePath)) {
       // Remove the file from the server to avoid leaving temporary files
-      fs.unlinkSync(localFilePath); // Synchronously delete the file from the local server
-      console.log("Temporary file removed from the server:", localFilePath);
+      fs.unlink(localFilePath, (err) => {
+        if (err) {
+          console.error("Error removing the temporary file:", err);
+        } else {
+          console.log("Temporary file removed from the server:", localFilePath);
+        }
+      });
     }
 
     // Return null to indicate failure

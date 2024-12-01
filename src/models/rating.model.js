@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import dbErrorHandler from "../utils/dbErrorHandler.js"; // Import error handler
 
 const ratingSchema = new mongoose.Schema({
   user: {
@@ -21,6 +22,12 @@ const ratingSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+});
+
+// Error handling middleware for MongoDB errors
+ratingSchema.post("save", function (error, doc, next) {
+  const err = dbErrorHandler(error); // Use the error handler utility
+  next(err);
 });
 
 export const Rating = mongoose.model("Rating", ratingSchema);

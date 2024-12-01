@@ -5,17 +5,22 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
+    "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js",
+    "tailwind": "npx tailwindcss -i ./global.css -o ./public/dist-1.css --watch",
+    "watch:css": "postcss ./global.css -o ./public/dist-1.css --watch"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "autoprefixer": "^10.4.20",
+    "axios": "^1.7.8",
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.5.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
     "express": "^4.21.1",
     "express-rate-limit": "^7.4.1",
     "helmet": "^8.0.0",
@@ -23,10 +28,14 @@
     "mongoose": "^8.8.2",
     "mongoose-aggregate-paginate-v2": "^1.1.2",
     "multer": "^1.4.5-lts.1",
+    "notyf": "^3.10.0",
+    "postcss": "^8.4.49",
     "pug": "^3.0.3",
+    "tailwindcss": "^3.4.15",
     "uuid": "^11.0.3"
   },
   "devDependencies": {
+    "daisyui": "^4.12.14",
     "nodemon": "^3.1.7",
     "prettier": "^3.3.3"
   }

@@ -1,0 +1,127 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="/styles/dist-1.css" />
+    <link rel="stylesheet" href="/styles/notyf.min.css">
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="bg-gray-800 p-6">
+      <div class="main-container flex justify-between items-center">
+        <a href="#" class="text-white text-3xl font-bold">sdmConnect</a>
+        <ul class="flex">
+          <li style="margin-left: 10px;"><a href="#">Upload</a></li>
+          <li style="margin-left: 10px;" class="m-10"><a href="#">Find</a></li>
+          <li style="margin-left: 10px;" class="m-10"><a href="#">Profile</a></li>
+          <li style="margin-left: 10px;" class="m-10" id="logout"><a href="#">Logout</a></li>
+        </ul>
+      </div>
+    </nav>
+    <br>
+    <br>
+    <br>
+    <section class="max-w-7xl mx-auto p-6 bg-gray-800 text-white rounded-lg shadow-lg">
+      <!-- User Profile Section -->
+      <div class="flex items-center space-x-6 mb-8">
+        <!-- User Avatar -->
+        <div class="w-32 h-32 bg-gray-600 rounded-full overflow-hidden">
+          <img src="http://res.cloudinary.com/deqebnjww/image/upload/v1733033189/ijtbf8kbqfc3yayrlc4u.png" alt="User Avatar" class="w-full h-full object-cover">
+        </div>
+        <!-- User Info -->
+        <div class="flex flex-col">
+          <h2 class="text-4xl font-semibold mb-2">Suchee Third</h2>
+          <p class="text-lg text-gray-400 mb-2">third@sdm.com</p>
+          <p class="text-sm text-gray-500 mb-4">@ third</p>
+          <p class="text-sm text-gray-400">Hello, I&#39;m new here!</p>
+        </div>
+
+        <!-- Edit btn -->
+        <button id="editProfileBtn" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Edit Profile</button>
+      </div>
+
+      <!-- Resources Section -->
+      <div>
+        <h3 class="text-2xl font-semibold mb-6">Resources Uploaded</h3>
+        <p class="text-gray-400">No resources uploaded yet.</p>
+      </div>
+    </section>
+
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="fixed inset-0 bg-gray-800 bg-opacity-75 hidden justify-center items-center">
+      <div class="bg-gray-700 p-6 rounded-lg w-96">
+        <h3 class="text-2xl font-semibold mb-4">Edit Profile</h3>
+        <form id="editProfileForm">
+          <div class="mb-4">
+            <label for="fullName" class="block text-gray-400">Full Name</label>
+            <input type="text" id="fullName" class="w-full p-2 mt-2 rounded" value="Suchee Third" required />
+          </div>
+          <div class="mb-4">
+            <label for="bio" class="block text-gray-400">Bio</label>
+            <textarea id="bio" class="w-full p-2 mt-2 rounded" required>Hello, I&#39;m new here!</textarea>
+          </div>
+          <div class="flex justify-between">
+            <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Save</button>
+            <button type="button" id="closeProfileModal" class="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <br>
+    <br>
+    <br><br><br><br><br><br><br><br>
+
+    <script src="/scripts/notyf.min.js"></script>
+    <script>
+      // Instantiate Notyf for notifications
+
+      // Open and close the profile edit modal
+      document.getElementById("editProfileBtn")?.addEventListener("click", function () {
+        document.getElementById("editProfileModal")?.classList.remove("hidden");
+      });
+
+      document.getElementById("closeProfileModal")?.addEventListener("click", function () {
+        document.getElementById("editProfileModal")?.classList.add("hidden");
+      });
+
+
+// Select the logout link element
+const logoutLink = document.getElementById("logout");
+const notyf = new Notyf();
+
+logoutLink?.addEventListener("click", async function (event) {
+  event.preventDefault(); // Prevent the default action of the link
+
+  try {
+    // Make a POST request to the server to log the user out
+    const response = await fetch('/api/v1/users/logout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // If you're using the accessToken in a header, make sure it is sent
+        'Authorization': `Bearer ${document.cookie.accessToken}`,
+      },
+      credentials: 'include' // Make sure cookies are included in the request
+    });
+
+    // Check if the response was successful (status code 200-299)
+    if (response.ok) {
+      // If logout was successful, show success notification
+      notyf.success("Successfully logged out!");
+      // Redirect after a short delay to allow the user to see the notification
+      setTimeout(() => {
+        window.location.href = '/pages/login?message=Successfully Logged Out'; // Redirect to login page
+      }, 1500); // Delay for 1.5 seconds
+    } else {
+      // Handle logout error (e.g., show an error message)
+      const errorMessage = await response.text();
+      notyf.error(`Logout failed: ${errorMessage}`);
+    }
+  } catch (error) {
+    // Handle any network or unexpected errors
+    notyf.error("An error occurred during logout. Please try again.");
+  }
+});
+
+    </script>
+  </body>
+</html>

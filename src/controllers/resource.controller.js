@@ -84,7 +84,6 @@ const createResource = asyncHandler(async (req, res) => {
       .json(new ApiResponse(500, null, "Internal Server Error"));
   }
 });
-
 // Combined function to search and filter resources
 const getAllResources = asyncHandler(async (req, res) => {
   // Step 1: Extract query parameters
@@ -125,7 +124,11 @@ const getAllResources = asyncHandler(async (req, res) => {
   // Step 4: Create the search query if searchQuery is provided
   if (searchQuery) {
     // Use regex with the "i" flag for case-insensitive search
-    filter.title = { $regex: searchQuery, $options: "i" };
+    // The regex pattern includes word boundaries to allow for partial matching
+    filter.title = {
+      $regex: `\\b${searchQuery}\\b`, // Match the searchQuery as part of words or sentences
+      $options: "i", // Case-insensitive matching
+    };
   }
 
   // Step 5: Aggregate query for filtering, searching, and pagination
