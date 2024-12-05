@@ -68,6 +68,17 @@ const userSchema = new Schema(
       type: String,
       required: [true, "Password is required"],
       min: [8, "Password must be at least 8 characters long"],
+      // validate: {
+      //   validator: function (v) {
+      //     // Password should contain at least:
+      //     // 1 uppercase letter, 1 lowercase letter, 1 digit, 1 special character, and minimum length of 8
+      //     return /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/.test(
+      //       v
+      //     );
+      //   },
+      //   message:
+      //     "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
+      // },
     },
     isBlocked: {
       type: Boolean,
@@ -75,6 +86,13 @@ const userSchema = new Schema(
     },
     refreshToken: {
       type: String,
+    },
+    // New fields for OTP functionality
+    passwordResetOtp: {
+      type: String, // Store OTP as a string
+    },
+    passwordResetOtpExpires: {
+      type: Date, // Store expiration time for OTP
     },
   },
   {
@@ -87,63 +105,42 @@ userSchema.pre("save", async function (next) {
   console.log("Pre-save hook triggered for user:", this.username);
 
   if (!this.isModified("password") || this.password.startsWith("$2b$")) {
-    // console.log("Password not modified or already hashed, skipping hash");
     return next();
   }
 
   try {
-    // console.log("Hashing password...");
     this.password = await bcrypt.hash(this.password, 10);
-    // console.log("Password hashed successfully");
     next();
   } catch (error) {
-    // console.error("Error while hashing password:", error);
     next(error);
   }
 });
 
 // Method to compare password
 userSchema.methods.isPasswordCorrect = async function (password) {
-  // console.log(
-  //   "Checking if provided password matches the stored hash for user:",
-  //   this.username
-  // ); // Log username for which we are checking the password
-
-  // Log the stored hashed password for debugging (ensure it's a hash, not plain text)
-  // console.log("Stored password hash:", this.password);
-
   const match = await bcrypt.compare(password, this.password);
-
-  // console.log("Password match result:", match); // true or false based on comparison
   return match;
 };
 
 // Method to generate an access token for the user
 userSchema.methods.generateAccessToken = function () {
-  try {
-    // console.log("Generating access token for user:", this.username);
-    const accessToken = jwt.sign(
-      {
-        _id: this._id,
-        username: this.username,
-        email: this.email,
-        fullName: this.fullName,
-      },
-      process.env.ACCESS_TOKEN_SECRET,
-      {
-        expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
-      }
-    );
-    return accessToken;
-  } catch (error) {
-    // console.error("Error generating access token:", error);
-    throw new Error("Token generation failed");
-  }
+  const accessToken = jwt.sign(
+    {
+      _id: this._id,
+      username: this.username,
+      email: this.email,
+      fullName: this.fullName,
+    },
+    process.env.ACCESS_TOKEN_SECRET,
+    {
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
+    }
+  );
+  return accessToken;
 };
 
 // Method to generate a refresh token for the user and save it to the database
 userSchema.methods.generateRefreshToken = function () {
-  // console.log("Generating refresh token for user:", this.username); // Debugging line
   const refreshToken = jwt.sign(
     {
       _id: this._id,
@@ -154,11 +151,7 @@ userSchema.methods.generateRefreshToken = function () {
     }
   );
 
-  console.log("Refresh token generated:", refreshToken); // Debugging line
-
-  // Save the refresh token in the user document
   this.refreshToken = refreshToken;
-  // console.log("Refresh token saved to user record"); // Debugging line
   return refreshToken;
 };
 

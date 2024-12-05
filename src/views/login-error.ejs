@@ -1,0 +1,60 @@
+<!-- views/login-error.ejs -->
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Authentication Required - My Website</title>
+
+    <!-- Notyf CSS for notifications -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/notyf@3.0.1/notyf.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind CSS (optional, for styling) -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.0/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-900 text-white">
+    <!-- Notyf JS for notifications -->
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3.0.1/notyf.min.js"></script>
+
+    <div class="flex items-center justify-center min-h-screen">
+      <div class="text-center">
+        <h1 class="text-4xl font-bold mb-6">Authentication Required</h1>
+        <p class="text-xl">
+          You must be logged in to access the page you were trying to reach.
+        </p>
+
+        <div class="mt-6">
+          <a href="/login" class="text-blue-400 underline text-lg"
+            >Click here to login</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const notyf = new Notyf({
+        duration: 4000, // 4 seconds
+        position: { x: "right", y: "top" },
+      });
+
+      // Display an error message based on the query parameter
+      const urlParams = new URLSearchParams(window.location.search);
+      const errorMessage = urlParams.get("error");
+      const redirectPage = urlParams.get("redirect");
+
+      if (errorMessage) {
+        if (errorMessage === "need-to-login") {
+          notyf.error(`You need to log in to access: ${redirectPage}`);
+        }
+      }
+    </script>
+  </body>
+</html>

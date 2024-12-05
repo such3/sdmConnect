@@ -184,12 +184,24 @@ const logoutUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, null, "Logged out successfully"));
 });
 
-// Fetch current user and return JSON response using ApiResponse
+// Fetch current user and populate their resources with title and slug
 const getCurrentUser = asyncHandler(async (req, res) => {
-  const user = req.user;
+  const user = req.user; // Assuming `req.user` is populated after authentication
+
+  // Populate the user's resources with title and slug
+  const populatedUser = await User.findById(user._id)
+    .populate({
+      path: "resources", // The name of the field in the User model that holds the resource ids
+      select: "title slug", // Only select the `title` and `slug` fields from the Resource model
+    })
+    .exec();
+
+  // Return the populated user data
   return res
     .status(200)
-    .json(new ApiResponse(200, user, "Current user fetched successfully"));
+    .json(
+      new ApiResponse(200, populatedUser, "Current user fetched successfully")
+    );
 });
 
 // Update account details and return JSON response using ApiResponse
@@ -313,11 +325,11 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   }
 });
 
+// Fetch user profile using the slug instead of username
 const publicProfile = asyncHandler(async (req, res) => {
-  const { username } = req.params; // Get the username from the URL parameter
-  console.log("Requested username:", username); // Debugging line
+  const { userSlug } = req.params; // Get the userSlug from the URL parameter
 
-  // Step 1: Find the user by username
+  // Step 1: Find the user by their slug instead of username
   const user = await User.findOne({ username }).populate(
     "resources",
     "title description semester branch file"
@@ -327,9 +339,6 @@ const publicProfile = asyncHandler(async (req, res) => {
   if (!user) {
     throw new ApiError(404, "User not found");
   }
-
-  console.log("User data:", user); // Debugging line
-  console.log("Populated resources:", user.resources); // Debugging line
 
   // Step 3: Return the user profile along with their resources
   return res.status(200).json(

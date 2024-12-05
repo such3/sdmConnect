@@ -5,18 +5,16 @@ import asyncHandler from "../utils/asyncHandler.js";
 
 // Add rating for a resource
 const rateResource = asyncHandler(async (req, res) => {
-  const { resourceId } = req.params;
-  console.log(req.params);
+  const { resourceSlug } = req.params; // Get resourceSlug from params
   const { rating } = req.body;
-  console.log(req.body);
 
   // Validate rating value (1-5)
   if (rating < 1 || rating > 5) {
     throw new ApiError(400, "Rating must be between 1 and 5");
   }
 
-  // Check if resource exists
-  const resource = await Resource.findById(resourceId);
+  // Check if resource exists using the slug
+  const resource = await Resource.findOne({ slug: resourceSlug });
   if (!resource) {
     throw new ApiError(404, "Resource not found");
   }
@@ -24,7 +22,7 @@ const rateResource = asyncHandler(async (req, res) => {
   // Check if the user has already rated this resource
   const existingRating = await Rating.findOne({
     user: req.user._id,
-    resource: resourceId,
+    resource: resource._id, // Still use the internal _id for rating association
   });
 
   if (existingRating) {
@@ -35,7 +33,7 @@ const rateResource = asyncHandler(async (req, res) => {
     // Create a new rating
     await Rating.create({
       user: req.user._id,
-      resource: resourceId,
+      resource: resource._id, // Use _id for storing the resource reference
       rating,
     });
   }
@@ -53,10 +51,10 @@ const rateResource = asyncHandler(async (req, res) => {
 
 // Get average rating of a resource
 const getResourceRating = asyncHandler(async (req, res) => {
-  const { resourceId } = req.params;
+  const { resourceSlug } = req.params; // Get resourceSlug from params
 
-  // Find the resource
-  const resource = await Resource.findById(resourceId);
+  // Find the resource using slug
+  const resource = await Resource.findOne({ slug: resourceSlug });
   if (!resource) {
     throw new ApiError(404, "Resource not found");
   }
@@ -70,11 +68,13 @@ const getResourceRating = asyncHandler(async (req, res) => {
     data: { averageRating: avgRating },
   });
 });
-const removeRating = asyncHandler(async (req, res) => {
-  const { resourceId } = req.params; // Get the resource ID from the request params
 
-  // Step 1: Check if the resource exists
-  const resource = await Resource.findById(resourceId);
+// Remove rating for a resource
+const removeRating = asyncHandler(async (req, res) => {
+  const { resourceSlug } = req.params; // Get the resourceSlug from the request params
+
+  // Step 1: Check if the resource exists using the slug
+  const resource = await Resource.findOne({ slug: resourceSlug });
   if (!resource) {
     throw new ApiError(404, "Resource not found");
   }
@@ -82,14 +82,14 @@ const removeRating = asyncHandler(async (req, res) => {
   // Step 2: Check if the user has rated this resource
   const rating = await Rating.findOne({
     user: req.user._id,
-    resource: resourceId,
+    resource: resource._id, // Still using the resource _id to find the rating
   });
 
   if (!rating) {
     throw new ApiError(404, "You have not rated this resource yet");
   }
 
-  // Step 3: Remove the user's rating for the resource using deleteOne
+  // Step 3: Remove the user's rating for the resource
   await Rating.deleteOne({ _id: rating._id });
 
   // Step 4: Optionally, recalculate the average rating for the resource if needed

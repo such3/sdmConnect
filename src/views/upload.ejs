@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Upload Resource - My Website</title>
+
+    <!-- Tailwind CSS CDN -->
+    <link rel="stylesheet" href="/styles/dist-1.css" />
+
+    <!-- Notyf CDN for notifications -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/notyf@3.0.1/notyf.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Icons8 CDN (for icons) -->
+    <link href="https://img.icons8.com" rel="stylesheet" />
+  </head>
+
+  <body class="bg-gray-900 text-white dark:bg-gray-900 dark:text-white">
+    <!-- Navbar -->
+    <nav class="bg-gray-800 p-6">
+      <div class="main-container flex justify-between items-center">
+        <a href="#" class="text-white text-3xl font-bold">Logo</a>
+        <div class="hidden md:flex space-x-6">
+          <a href="/pages/logout" class="text-white hover:text-blue-400"
+            >Login</a
+          >
+          <a href="register.html" class="text-white hover:text-blue-400"
+            >Register</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <!-- Upload Resource Form -->
+    <section class="py-16 bg-gray-800">
+      <div
+        class="max-w-3xl mx-auto bg-gray-700 p-8 sm:p-12 rounded-lg shadow-xl"
+      >
+        <h2 class="text-3xl font-bold text-white mb-8 text-center">
+          Upload Resource
+        </h2>
+        <form id="uploadForm" method="POST" class="space-y-6">
+          <!-- Title Field -->
+          <div class="space-y-2">
+            <label for="title" class="text-lg text-gray-300">Title</label>
+            <input
+              type="text"
+              name="title"
+              placeholder="Resource Title"
+              id="title"
+              class="input input-bordered w-full text-white bg-gray-600 rounded-lg p-4 focus:ring-2 focus:ring-blue-500 transition ease-in-out duration-300"
+              required
+            />
+          </div>
+
+          <!-- Description Field -->
+          <div class="space-y-2">
+            <label for="description" class="text-lg text-gray-300"
+              >Description</label
+            >
+            <textarea
+              name="description"
+              placeholder="Write a brief description"
+              id="description"
+              class="textarea textarea-bordered w-full text-white bg-gray-600 rounded-lg p-4 focus:ring-2 focus:ring-blue-500 transition ease-in-out duration-300"
+              rows="4"
+              required
+            ></textarea>
+          </div>
+
+          <!-- Semester Select -->
+          <div class="space-y-2">
+            <label for="semester" class="text-lg text-gray-300">Semester</label>
+            <select
+              name="semester"
+              id="semester"
+              class="select select-bordered w-full text-white bg-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 transition ease-in-out duration-300"
+              required
+            >
+              <option value="" disabled selected>Select Semester</option>
+              <option value="1">Semester 1</option>
+              <option value="2">Semester 2</option>
+              <option value="3">Semester 3</option>
+              <option value="4">Semester 4</option>
+              <option value="5">Semester 5</option>
+              <option value="6">Semester 6</option>
+              <option value="7">Semester 7</option>
+              <option value="8">Semester 8</option>
+            </select>
+          </div>
+
+          <!-- Branch Select -->
+          <div class="space-y-2">
+            <label for="branch" class="text-lg text-gray-300">Branch</label>
+            <select
+              name="branch"
+              id="branch"
+              class="select select-bordered w-full text-white bg-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 transition ease-in-out duration-300"
+              required
+            >
+              <option value="" disabled selected>Select Branch</option>
+              <option value="CSE">Computer Science Engineering</option>
+              <option value="ECE">
+                Electronics and Communication Engineering
+              </option>
+              <option value="EEE">Electrical Engineering</option>
+              <option value="MECH">Mechanical Engineering</option>
+              <option value="CIVIL">Civil Engineering</option>
+              <option value="ISE">Information Science Engineering</option>
+              <option value="AIML">AIML</option>
+              <option value="CHEMICAL">Chemical</option>
+            </select>
+          </div>
+
+          <!-- URL Field -->
+          <div class="space-y-2">
+            <label for="url" class="text-lg text-gray-300">Resource URL</label>
+            <input
+              type="url"
+              name="file"
+              placeholder="https://example.com/resource"
+              id="url"
+              class="input input-bordered w-full text-white bg-gray-600 rounded-lg p-4 focus:ring-2 focus:ring-blue-500 transition ease-in-out duration-300"
+              required
+            />
+          </div>
+
+          <!-- Submit Button -->
+          <div>
+            <button
+              type="submit"
+              class="btn btn-primary w-full py-3 text-lg rounded-lg bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition ease-in-out duration-300"
+            >
+              Upload Resource
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-4">
+      <div class="text-center">
+        <p>&copy; 2024 My Website. All rights reserved.</p>
+      </div>
+    </footer>
+    <script src="/scripts/notyf.min.js"></script>
+
+    <script>
+      // Initialize Notyf (with new keyword)
+      const notyf = new Notyf({
+        duration: 4000, // 4 seconds
+        position: { x: "right", y: "top" },
+      });
+      document
+        .getElementById("uploadForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          // Validate fields
+          const title = document.getElementById("title").value.trim();
+          const description = document
+            .getElementById("description")
+            .value.trim();
+          const semester = document.getElementById("semester").value;
+          const branch = document.getElementById("branch").value;
+          const file = document.getElementById("url").value.trim();
+
+          if (!title || !description || !semester || !branch || !file) {
+            notyf.error("Please fill out all fields.");
+            return;
+          }
+
+          // Prepare form data to send to API
+          const formData = {
+            title: title,
+            description: description,
+            semester: semester,
+            branch: branch,
+            file: file,
+          };
+
+          try {
+            // Send the POST request using fetch
+            const response = await fetch("/api/v1/users/resource", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(formData),
+            });
+            console.log(response);
+
+            // Check if the response is successful
+            if (response.ok) {
+              // Try parsing the JSON response
+              const responseData = await response.json(); // Directly parse as JSON
+              console.log(responseData); // Check the response in the console
+              notyf.success("Resource uploaded successfully!");
+
+              // Reset the form
+              document.getElementById("uploadForm").reset(); // Reset the form
+
+              // Assuming the response contains a resource ID or slug, redirect after 2 seconds
+              const resourceSlug = responseData.data.slug; // Adjust according to your response format
+              setTimeout(() => {
+                window.location.href = `/pages/resource/${resourceSlug}`; // Redirect to the resource's individual page
+              }, 2000); // 2-second delay before redirect
+            } else {
+              // Handle error responses
+              const errorData = await response.json();
+              notyf.error(
+                `Error: ${errorData.message || "An unexpected error occurred."}`
+              );
+            }
+          } catch (error) {
+            // Handle network or unexpected errors
+            console.error("Request failed:", error);
+            notyf.error("Something went wrong. Please try again.");
+          }
+        });
+    </script>
+  </body>
+</html>

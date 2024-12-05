@@ -1,6 +1,4 @@
 import {
-  // blockUser,
-  // unblockUser,
   deleteUser,
   blockResource,
   unblockResource,
@@ -26,13 +24,14 @@ const router = Router();
 
 router.route("/delete-user/:userId").delete(verifyJWT, verifyAdmin, deleteUser);
 
+// Use slug instead of resourceId for blocking/unblocking resources
 router
-  .route("/block-resource/:resourceId")
-  .patch(verifyJWT, verifyAdmin, blockResource);
+  .route("/block-resource/:slug")
+  .patch(verifyJWT, verifyAdmin, blockResource); // Block resource by slug
 
 router
-  .route("/unblock-resource/:resourceId")
-  .patch(verifyJWT, verifyAdmin, unblockResource);
+  .route("/unblock-resource/:slug")
+  .patch(verifyJWT, verifyAdmin, unblockResource); // Unblock resource by slug
 
 // Admin dashboard route to fetch analytics and statistics
 router.route("/admin/dashboard").get(verifyJWT, verifyAdmin, adminDashboard);

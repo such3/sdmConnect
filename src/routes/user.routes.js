@@ -66,7 +66,6 @@ router.route("/logout").post(verifyJWT, logoutUser); // User logout handler
  * @access Public
  */
 router.route("/refresh-token").post(refreshAccessToken); // Token refresh handler
-
 // Resource Routes (Secured for authenticated users)
 
 /**
@@ -84,25 +83,25 @@ router.route("/resource").post(verifyJWT, createResource); // Resource creation 
 router.route("/resources").get(verifyJWT, getAllResources); // Fetch all resources
 
 /**
- * @route GET /resource/:resourceId
- * @description Get a single resource by ID
+ * @route GET /resource/:slug
+ * @description Get a single resource by slug
  * @access Private (requires JWT)
  */
-router.route("/resource/:resourceId").get(verifyJWT, getSingleResource); // Fetch a specific resource
+router.route("/resource/:slug").get(verifyJWT, getSingleResource); // Fetch a specific resource by slug
 
 /**
- * @route PUT /resource/:resourceId
- * @description Update an existing resource by ID
+ * @route PUT /resource/:slug
+ * @description Update an existing resource by slug
  * @access Private (requires JWT)
  */
-router.route("/resource/:resourceId").put(verifyJWT, updateResource); // Resource update handler
+router.route("/resource/:slug").put(verifyJWT, updateResource); // Resource update handler by slug
 
 /**
- * @route DELETE /resource/:resourceId
- * @description Delete a resource by ID
+ * @route DELETE /resource/:slug
+ * @description Delete a resource by slug
  * @access Private (requires JWT)
  */
-router.route("/resource/:resourceId").delete(verifyJWT, deleteResource); // Resource deletion handler
+router.route("/resource/:slug").delete(verifyJWT, deleteResource); // Resource deletion handler by slug
 
 router.route("/profile").get(verifyJWT, getCurrentUser); // Fetch a specific user
 // Rating Routes (Secured for authenticated users)

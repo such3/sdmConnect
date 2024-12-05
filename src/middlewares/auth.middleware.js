@@ -13,9 +13,11 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
       req.headers["authorization"]?.replace("Bearer ", "") ||
       req.query.accessToken;
 
-    // If no token is found, return an error (Unauthorized)
+    // If no token is found, redirect to login-error with the route the user tried to access
     if (!token) {
-      throw new ApiError(401, "You need to login to access this route");
+      return res.redirect(
+        `/login-error?error=need-to-login&redirect=${encodeURIComponent(req.originalUrl)}`
+      );
     }
 
     // Step 2: Verify the token using the secret key

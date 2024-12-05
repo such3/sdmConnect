@@ -121,10 +121,10 @@ const deleteUser = asyncHandler(async (req, res) => {
 
 // Block a resource by Admin
 const blockResource = asyncHandler(async (req, res) => {
-  const { resourceId } = req.params; // Get the resourceId from the request params
+  const { resourceSlug } = req.params; // Get the resourceSlug from the request params
 
-  // Step 1: Find the resource by ID
-  const resource = await Resource.findById(resourceId);
+  // Step 1: Find the resource by slug
+  const resource = await Resource.findOne({ slug: resourceSlug });
 
   if (!resource) {
     throw new ApiError(404, "Resource not found");
@@ -144,10 +144,10 @@ const blockResource = asyncHandler(async (req, res) => {
 
 // Unblock a resource by Admin
 const unblockResource = asyncHandler(async (req, res) => {
-  const { resourceId } = req.params; // Get the resourceId from the request params
+  const { resourceSlug } = req.params; // Get the resourceSlug from the request params
 
-  // Step 1: Find the resource by ID
-  const resource = await Resource.findById(resourceId);
+  // Step 1: Find the resource by slug
+  const resource = await Resource.findOne({ slug: resourceSlug });
 
   if (!resource) {
     throw new ApiError(404, "Resource not found");
