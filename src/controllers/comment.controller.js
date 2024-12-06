@@ -14,9 +14,14 @@ const addComment = asyncHandler(async (req, res, next) => {
     throw new ApiError(404, "Resource not found");
   }
 
+  // Ensure the user is authenticated and has a valid user ID
+  if (!req.user || !req.user._id) {
+    throw new ApiError(400, "User not authenticated");
+  }
+
   // Create a new comment
   const newComment = new Comment({
-    user: req.user._id, // User who is adding the comment
+    user: req.user._id, // Use req.user._id instead of req.username
     resource: resource._id, // Resource the comment belongs to
     comment,
   });
@@ -114,10 +119,10 @@ const getComments = asyncHandler(async (req, res, next) => {
 
   // Populate the comments with user details
   const comments = await Comment.find({ resource: resource._id })
-    .populate("user", "fullName username avatar")
-    .sort({ createdAt: -1 });
+    .populate("user", "fullName username avatar") // Populating user details
+    .sort({ createdAt: -1 }); // Sorting comments by creation date (newest first)
 
-  // Return success response
+  // Return success response with the comments
   return res.status(200).json({
     message: "Comments fetched successfully",
     comments,

@@ -6,6 +6,73 @@
     <title>sdmConnect - <%= resource.title %></title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+      .comment-section {
+  margin-top: 30px;
+}
+
+.comments-list {
+  margin-bottom: 20px;
+}
+
+.comment {
+  background-color: #f9f9f9;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+}
+
+.comment-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.comment-author {
+  font-weight: bold;
+}
+
+.comment-date {
+  margin-left: auto;
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.comment-text {
+  margin-top: 10px;
+}
+
+.comment-actions {
+  margin-top: 10px;
+}
+
+.comment-actions button {
+  margin-right: 10px;
+}
+
+#commentForm textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+#commentForm button {
+  padding: 10px 20px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+    </style>
   </head>
   <body class="bg-gray-900 font-sans text-white h-screen flex flex-col">
     <!-- Navbar -->
@@ -14,9 +81,8 @@
         <a href="/" class="text-white text-3xl font-semibold hover:text-blue-500">sdmConnect</a>
         <ul class="flex space-x-6 text-lg">
           <li><a href="/pages/upload" class="hover:text-blue-500">Upload</a></li>
-          <li><a href="#" class="hover:text-blue-500">Find</a></li>
-          <li><a href="#" class="hover:text-blue-500">Profile</a></li>
-          <li><a href="#" id="logout" class="hover:text-blue-500">Logout</a></li>
+          <li><a href="/pages/upload" class="hover:text-blue-500">Find</a></li>
+          <li><a href="/pages/profile" class="hover:text-blue-500">Profile</a></li>
         </ul>
       </div>
     </nav>
@@ -85,6 +151,83 @@
       </div>
     </section>
 
+<!-- Comments Section -->
+<section class="py-10 bg-gray-800">
+  <div class="max-w-4xl mx-auto bg-gray-700 p-6 rounded-lg shadow-lg">
+    <h2 class="text-2xl font-semibold text-white mb-6">Comments</h2>
+
+    <!-- Render Comments -->
+    <% if (comments && comments.length > 0) { %>
+      <div class="comments-list space-y-6">
+        <% comments.forEach(comment => { %>
+          <div class="flex justify-between items-center p-4 bg-gray-600 rounded-lg shadow-md">
+            <div class="flex items-center">
+              <img
+                src="<%= comment.user.avatar %>"
+                alt="<%= comment.user.fullName %>"
+                class="w-12 h-12 rounded-full mr-3"
+              />
+              <div>
+                <p class="text-white font-semibold"><%= comment.user.fullName %></p>
+                <p class="text-gray-400 text-sm">Posted on: <%= new Date(comment.createdAt).toLocaleString() %></p>
+              </div>
+            </div>
+
+            <!-- Edit and Delete buttons -->
+            <% if (comment.user._id.toString() === user._id.toString()) { %>
+              <div class="flex items-center space-x-2">
+                <button class="text-blue-400 text-sm" onclick="openEditModal('<%= comment._id %>', '<%= comment.comment %>')">Edit</button>
+                <button class="text-red-400 text-sm" onclick="openDeleteConfirmation('<%= comment._id %>')">Delete</button>
+              </div>
+            <% } %>
+          </div>
+          <p class="text-gray-300 mb-4 px-4"><%= comment.comment %></p>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <p class="text-gray-400 text-center mt-4">No comments yet. Be the first to comment!</p>
+    <% } %>
+
+    <!-- Add Comment Form -->
+    <form action="/api/v1/users/<%= resource.slug %>/comments" method="POST" class="mt-6">
+      <textarea
+        name="comment"
+        class="w-full p-4 bg-gray-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+        placeholder="Write your comment here..."
+        required
+      ></textarea>
+      <button
+        type="submit"
+        class="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition"
+      >
+        Add Comment
+      </button>
+    </form>
+  </div>
+</section>
+
+<!-- Edit Comment Modal -->
+<div id="editCommentModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden">
+  <div class="bg-gray-700 p-6 rounded-lg shadow-xl max-w-md w-full">
+    <h3 class="text-2xl font-semibold text-white mb-4">Edit Your Comment</h3>
+    <textarea id="editCommentText" class="w-full p-4 bg-gray-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4" rows="4"></textarea>
+    <div class="flex gap-4">
+      <button class="w-full bg-gray-500 text-white p-2 rounded-lg" onclick="closeModal()">Cancel</button>
+      <button class="w-full bg-blue-500 text-white p-2 rounded-lg" onclick="saveComment()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteConfirmationModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden">
+  <div class="bg-gray-700 p-6 rounded-lg shadow-xl max-w-md w-full">
+    <h3 class="text-2xl font-semibold text-white mb-4">Are you sure you want to delete this comment?</h3>
+    <div class="flex gap-4">
+      <button class="w-full bg-gray-500 text-white p-2 rounded-lg" onclick="closeModal()">Cancel</button>
+      <button class="w-full bg-red-500 text-white p-2 rounded-lg" onclick="deleteComment()">Delete</button>
+    </div>
+  </div>
+</div>
     <!-- Footer -->
     <footer class="bg-gray-800 text-center text-gray-400 py-6 mt-8">
       <p>&copy; 2024 sdmConnect | All Rights Reserved</p>
@@ -92,6 +235,35 @@
 
     <!-- Logout Handling (JavaScript) -->
     <script>
+      function openEditModal(commentId, commentText) {
+    document.getElementById('editCommentModal').style.display = 'flex';
+    document.getElementById('editCommentText').value = commentText;
+    window.editCommentId = commentId;  // Store the commentId to be used for saving the comment
+  }
+
+  function closeModal() {
+    document.getElementById('editCommentModal').style.display = 'none';
+    document.getElementById('deleteConfirmationModal').style.display = 'none';
+  }
+
+  function saveComment() {
+    const updatedCommentText = document.getElementById('editCommentText').value;
+    // Submit the updated comment data here (use AJAX or a form submission)
+    console.log('Updated comment:', updatedCommentText, 'for commentId:', window.editCommentId);
+    closeModal();
+  }
+
+  function openDeleteConfirmation(commentId) {
+    document.getElementById('deleteConfirmationModal').style.display = 'flex';
+    window.deleteCommentId = commentId;  // Store the commentId to be used for deletion
+  }
+
+  function deleteComment() {
+    const commentId = window.deleteCommentId;
+    // Perform the deletion (use AJAX or a form submission)
+    console.log('Deleting comment with ID:', commentId);
+    closeModal();
+  }
       const logoutLink = document.getElementById("logout");
 
       logoutLink?.addEventListener("click", async function (event) {
@@ -118,6 +290,42 @@
           alert("An error occurred during logout. Please try again.");
         }
       });
+
+      function deleteComment(commentSlug) {
+      if (confirm("Are you sure you want to delete this comment?")) {
+        fetch(`/resources/<%= resource.slug %>/comments/${commentSlug}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        }).then(response => {
+          if (response.ok) {
+            document.getElementById('comment-' + commentSlug).remove();
+          } else {
+            alert("Failed to delete comment");
+          }
+        });
+      }
+    }
+
+    function editComment(commentSlug) {
+      const newComment = prompt("Edit your comment:");
+      if (newComment) {
+        fetch(`/resources/<%= resource.slug %>/comments/${commentSlug}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ comment: newComment })
+        }).then(response => {
+          if (response.ok) {
+            window.location.reload(); // Refresh to show updated comment
+          } else {
+            alert("Failed to edit comment");
+          }
+        });
+      }
+    }
     </script>
   </body>
 </html>

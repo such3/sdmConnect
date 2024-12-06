@@ -131,38 +131,17 @@ router.route("/resource/:resourceId/rating").get(verifyJWT, getResourceRating); 
 
 // Comment Routes (Secured for authenticated users)
 
-/**
- * @route POST /resource/:resourceId/comment
- * @description Add a comment to a resource
- * @access Private (requires JWT)
- */
-router.route("/resource/:resourceId/comment").post(verifyJWT, addComment); // Add comment to resource
+// Route to add a comment
+router.post("/:resourceSlug/comments", verifyJWT, addComment);
 
-/**
- * @route PUT /resource/:resourceId/comment/:commentId
- * @description Edit a comment on a resource
- * @access Private (requires JWT)
- */
-router
-  .route("/resource/:resourceId/comment/:commentId")
-  .put(verifyJWT, editComment); // Edit existing comment
+// Route to get all comments for a resource
+router.get("/:resourceSlug/comments", verifyJWT, getComments);
 
-/**
- * @route DELETE /resource/:resourceId/comment/:commentId
- * @description Delete a comment from a resource
- * @access Private (requires JWT)
- */
-router
-  .route("/resource/:resourceId/comment/:commentId")
-  .delete(verifyJWT, deleteComment); // Delete comment
+// Route to edit a specific comment by its slug
+router.put("/:resourceSlug/comments/:commentSlug", verifyJWT, editComment);
 
-/**
- * @route GET /resource/:resourceId/comments
- * @description Get all comments for a specific resource
- * @access Private (requires JWT)
- */
-router.route("/resource/:resourceId/comments").get(verifyJWT, getComments); // Get all comments for resource
-
+// Route to delete a specific comment by its slug
+router.delete("/:resourceSlug/comments/:commentSlug", verifyJWT, deleteComment);
 // Uncomment below to enable download resource functionality
 // /**
 //  * @route GET /resource/download/:filename

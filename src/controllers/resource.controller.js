@@ -69,8 +69,6 @@ const createResource = asyncHandler(async (req, res) => {
     );
   }
 });
-
-// Combined function to search and filter resources
 const getAllResources = asyncHandler(async (req, res) => {
   // Step 1: Extract query parameters
   const { searchQuery, semester, branch, page = 1, limit = 10 } = req.query;
@@ -109,10 +107,9 @@ const getAllResources = asyncHandler(async (req, res) => {
 
   // Step 4: Create the search query if searchQuery is provided
   if (searchQuery) {
-    // Use regex with the "i" flag for case-insensitive search
-    // The regex pattern includes word boundaries to allow for partial matching
+    // Use regex to match the searchQuery as a substring (not using word boundaries)
     filter.title = {
-      $regex: `\\b${searchQuery}\\b`, // Match the searchQuery as part of words or sentences
+      $regex: searchQuery, // Match the searchQuery as part of the title string
       $options: "i", // Case-insensitive matching
     };
   }
@@ -120,9 +117,7 @@ const getAllResources = asyncHandler(async (req, res) => {
   // Step 5: Aggregate query for filtering, searching, and pagination
   const aggregateQuery = Resource.aggregate([
     { $match: filter }, // Match the filter conditions (search and other filters)
-    {
-      $sort: { createdAt: -1 }, // Sort by the most recent resource (createdAt)
-    },
+    { $sort: { createdAt: -1 } }, // Sort by the most recent resource (createdAt)
     {
       $lookup: {
         from: "users", // Lookup the owner details from the User model
@@ -184,6 +179,7 @@ const getAllResources = asyncHandler(async (req, res) => {
     )
   );
 });
+
 const getSingleResource = asyncHandler(async (req, res) => {
   const resourceSlug = req.params; // Extract the resourceSlug from the request parameters
   console.log(resourceSlug);

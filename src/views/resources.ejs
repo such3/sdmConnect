@@ -13,9 +13,7 @@
         <a href="/" class="text-white text-3xl font-semibold hover:text-blue-500">sdmConnect</a>
         <ul class="flex space-x-6 text-lg">
           <li><a href="/pages/upload" class="hover:text-blue-500">Upload</a></li>
-          <li><a href="#" class="hover:text-blue-500">Find</a></li>
-          <li><a href="#" class="hover:text-blue-500">Profile</a></li>
-          <li><a href="#" id="logout" class="hover:text-blue-500">Logout</a></li>
+          <li><a href="/pages/profile" class="hover:text-blue-500">Profile</a></li>
         </ul>
       </div>
     </nav>
@@ -27,38 +25,70 @@
       </div>
     <% } %>
 
-    <!-- Filters Section -->
-    <section class="bg-gray-800 p-6 mt-8 rounded-lg shadow-lg">
-      <div class="flex justify-between items-center max-w-7xl mx-auto">
-        <!-- Semester Filter -->
-        <div class="flex items-center space-x-4">
-          <label for="semester" class="text-white">Filter by Semester:</label>
-          <select id="semester" class="bg-gray-700 text-white p-2 rounded-md">
-            <option value="">All</option>
-            <% for (let i = 1; i <= 8; i++) { %>
-              <option value="<%= i %>" <%= semester === String(i) ? 'selected' : '' %>><%= i %></option>
-            <% } %>
-          </select>
-        </div>
+   <!-- Filters Section -->
+<section class="bg-gray-800 p-6 mt-8 rounded-lg shadow-lg">
+  <div class="max-w-7xl mx-auto">
+    <!-- Filter Container: Use Grid for responsiveness -->
+    <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      
+      <!-- Semester Filter -->
+      <div class="flex flex-col space-y-2">
+        <label for="semester" class="text-white">Filter by Semester:</label>
+        <select id="semester" class="bg-gray-700 text-white p-2 rounded-md">
+          <option value="">All</option>
+          <% for (let i = 1; i <= 8; i++) { %>
+            <option value="<%= i %>" <%= semester === String(i) ? 'selected' : '' %>><%= i %></option>
+          <% } %>
+        </select>
+      </div>
 
-        <!-- Branch Filter -->
-        <div class="flex items-center space-x-4">
-          <label for="branch" class="text-white">Filter by Branch:</label>
-          <select id="branch" class="bg-gray-700 text-white p-2 rounded-md">
-            <option value="">All</option>
-            <% const branches = ["ISE", "CSE", "ECE", "MECH", "CIVIL", "EEE", "AIML", "CHEMICAL"]; %>
-            <% branches.forEach(function(branchOption) { %>
-              <option value="<%= branchOption %>" <%= branch === branchOption ? 'selected' : '' %>><%= branchOption %></option>
-            <% }); %>
-          </select>
-        </div>
+      <!-- Branch Filter -->
+      <div class="flex flex-col space-y-2">
+        <label for="branch" class="text-white">Filter by Branch:</label>
+        <select id="branch" class="bg-gray-700 text-white p-2 rounded-md">
+          <option value="">All</option>
+          <% const branches = ["ISE", "CSE", "ECE", "MECH", "CIVIL", "EEE", "AIML", "CHEMICAL"]; %>
+          <% branches.forEach(function(branchOption) { %>
+            <option value="<%= branchOption %>" <%= branch === branchOption ? 'selected' : '' %>><%= branchOption %></option>
+          <% }); %>
+        </select>
+      </div>
 
-        <!-- Filter Button -->
-        <div>
-          <button onclick="applyFilters()" class="bg-blue-500 text-white py-2 px-6 rounded-md">Apply Filters</button>
+      <!-- Search Input -->
+      <div class="flex flex-col space-y-2">
+        <label for="search" class="text-white">Search Resources:</label>
+        <div class="flex items-center space-x-4">
+          <input 
+            type="text" 
+            id="search" 
+            value="<%= searchQuery %>" 
+            placeholder="Search resources..." 
+            class="bg-gray-700 text-white p-2 rounded-md flex-1"
+          />
+          <button onclick="applySearch()" class="bg-blue-500 text-white py-2 px-4 rounded-md">
+            Seearch
+          </button>
         </div>
       </div>
-    </section>
+      
+    </div>
+
+    <!-- Button Container: Flex layout to align buttons -->
+    <div class="mt-6 flex flex-col sm:flex-row sm:space-x-4 justify-between items-center">
+      
+      <!-- Apply Filters Button -->
+      <div>
+        <button onclick="applyFilters()" class="bg-blue-500 text-white py-2 px-6 rounded-md w-full sm:w-auto">Apply Filters</button>
+      </div>
+
+      <!-- Clear Filters Button -->
+      <div class="mt-4 sm:mt-0">
+        <a href="/pages/resources" class="bg-gray-600 text-white py-2 px-6 rounded-md w-full sm:w-auto text-center">Clear Filters</a>
+      </div>
+
+    </div>
+  </div>
+</section>
 
     <!-- Resources Section -->
     <section class="max-w-7xl mx-auto p-8">
@@ -101,7 +131,7 @@
       <div class="flex justify-center mt-8 space-x-4">
         <!-- Previous Page -->
         <% if (currentPage > 1) { %>
-          <a href="/pages/resources?page=<%= currentPage - 1 %>&semester=<%= semester %>&branch=<%= branch %>" class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Previous</a>
+          <a href="/pages/resources?page=<%= currentPage - 1 %>&semester=<%= semester %>&branch=<%= branch %>&search=<%= searchQuery %>" class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Previous</a>
         <% } %>
 
         <!-- Page Numbers -->
@@ -111,7 +141,7 @@
 
         <!-- Next Page -->
         <% if (currentPage < totalPages) { %>
-          <a href="/pages/resources?page=<%= currentPage + 1 %>&semester=<%= semester %>&branch=<%= branch %>" class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Next</a>
+          <a href="/pages/resources?page=<%= currentPage + 1 %>&semester=<%= semester %>&branch=<%= branch %>&search=<%= searchQuery %>" class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Next</a>
         <% } %>
       </div>
     </section>
@@ -122,11 +152,18 @@
     </footer>
 
     <script>
-      // Handle filter changes
+      // Apply Filters
       function applyFilters() {
         const semester = document.getElementById("semester").value;
         const branch = document.getElementById("branch").value;
-        window.location.href = `/pages/resources?page=1&semester=${semester}&branch=${branch}`;
+        const searchQuery = document.getElementById("search").value;
+        window.location.href = `/pages/resources?page=1&semester=${semester}&branch=${branch}&searchQuery=${searchQuery}`;
+      }
+
+      // Apply Search
+      function applySearch() {
+        const searchQuery = document.getElementById("search").value;
+        window.location.href = `/pages/resources?page=1&searchQuery=${searchQuery}`;
       }
     </script>
   </body>

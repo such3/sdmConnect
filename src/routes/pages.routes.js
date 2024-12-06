@@ -84,6 +84,7 @@ router.get("/profile", verifyJWT, async (req, res) => {
 router.get("/resource/:slug", verifyJWT, async (req, res) => {
   const { slug } = req.params; // Get the slug from the URL parameter
   console.log("Requested Slug:", slug); // Debugging the slug
+
   try {
     // Fetch the resource from the existing endpoint
     const response = await fetch(
@@ -96,7 +97,6 @@ router.get("/resource/:slug", verifyJWT, async (req, res) => {
     );
     console.log("API Response Status:", response.status); // Log the response status
 
-    // If the resource wasn't found, handle the error
     if (!response.ok) {
       return res.status(404).render("error", {
         message: "Resource not found",
@@ -104,17 +104,33 @@ router.get("/resource/:slug", verifyJWT, async (req, res) => {
       });
     }
 
-    // Parse the response as JSON
-    const data = await response.json();
-    console.log("Fetched Data:", data); // Log the fetched data
+    // Parse the JSON response from the resource API
+    const resourceData = await response.json();
+    console.log("Fetched Resource Data:", resourceData); // Log the fetched resource data
 
-    // Check if data contains the expected field
-    if (data?.status !== 200 || !data?.data) {
+    if (!resourceData?.data) {
       throw new Error("Invalid response structure");
     }
 
-    // Render the resource page with the fetched data
-    res.render("resource", { resource: data.data }); // Assuming the resource data is in data.data
+    // Fetch comments for the resource
+    const commentsResponse = await fetch(
+      `http://localhost:3000/api/v1/users/resources/${slug}/comments`,
+      {
+        headers: {
+          Authorization: `Bearer ${req.cookies.accessToken}`,
+        },
+      }
+    );
+
+    const commentsData = await commentsResponse;
+    console.log("Fetched Comments Data:", commentsData); // Log the fetched comments data
+
+    // Render the resource page with the fetched resource and comments data
+    res.render("resource", {
+      resource: resourceData.data, // Pass the resource data
+      comments: commentsData.comments || [], // Pass the comments (empty array if no comments)
+      user: req.user, // Pass user data for authentication check (if needed for edit/delete actions)
+    });
   } catch (err) {
     console.error("Error fetching resource:", err);
     res.status(500).render("error", {
@@ -138,14 +154,15 @@ router.get("/login-error", (req, res) => {
 });
 // Route to fetch and render the resources page with filters
 router.get("/resources", async (req, res) => {
-  const { semester, branch, page = 1 } = req.query; // Get filter parameters from query string
-
-  // Construct the API URL with optional filters
+  const { semester, branch, page = 1, searchQuery = "" } = req.query; // Get filter parameters and search term from query string
+  console.log("Search Query:", searchQuery); // Debugging the search query
+  // Construct the API URL with optional filters and search query
   let apiUrl = `http://localhost:3000/api/v1/users/resources?page=${page}`;
 
   // Add filters if they are provided
   if (semester) apiUrl += `&semester=${semester}`;
   if (branch) apiUrl += `&branch=${branch}`;
+  if (searchQuery) apiUrl += `&searchQuery=${searchQuery}`; // Add search query if provided
 
   // Get the token from cookies, headers, or session storage (depending on your storage method)
   const token =
@@ -163,14 +180,12 @@ router.get("/resources", async (req, res) => {
 
   try {
     const response = await fetch(apiUrl, fetchOptions);
-    console.log(response);
-
+    console.log("Response  : ", response);
     // Check if the response is OK and the content is JSON
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    // Check if the response is JSON by looking at the content-type header
     const contentType = response.headers.get("content-type");
     if (!contentType || !contentType.includes("application/json")) {
       throw new Error(`Expected JSON, but received: ${contentType}`);
@@ -188,6 +203,7 @@ router.get("/resources", async (req, res) => {
         currentPage: 1,
         semester,
         branch,
+        searchQuery: searchQuery, // Include the search query
       });
     }
 
@@ -203,6 +219,7 @@ router.get("/resources", async (req, res) => {
       semester,
       branch,
       error: null, // No error
+      searchQuery: searchQuery, // Include the search query
     });
   } catch (err) {
     console.error("Error fetching resources:", err.message);
@@ -214,6 +231,7 @@ router.get("/resources", async (req, res) => {
       currentPage: 1,
       semester,
       branch,
+      searchQuery: searchQuery, // Include the search query in case of error
     });
   }
 });
