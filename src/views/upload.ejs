@@ -213,6 +213,7 @@
             } else {
               // Handle error responses
               const errorData = await response.json();
+              console.log("Error data:", errorData);
               notyf.error(
                 `Error: ${errorData.message || "An unexpected error occurred."}`
               );

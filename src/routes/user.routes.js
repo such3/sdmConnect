@@ -141,10 +141,14 @@ router.post("/:resourceSlug/comments", verifyJWT, addComment);
 router.get("/:resourceSlug/comments", verifyJWT, getComments);
 
 // Route to edit a specific comment by its slug
-router.put("/:resourceSlug/comments/:commentSlug", verifyJWT, editComment);
+router.put("/:resourceSlug/comments/:uniqueString", verifyJWT, editComment);
 
 // Route to delete a specific comment by its slug
-router.delete("/:resourceSlug/comments/:commentSlug", verifyJWT, deleteComment);
+router.delete(
+  "/:resourceSlug/comments/:uniqueString",
+  verifyJWT,
+  deleteComment
+);
 // Uncomment below to enable download resource functionality
 // /**
 //  * @route GET /resource/download/:filename

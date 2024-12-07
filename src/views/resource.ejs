@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>sdmConnect - <%= resource.title %></title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/notyf@3.8.0/notyf.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/notyf@3.8.0/notyf.min.js"></script>
 </head>
 <body class="bg-gray-900 text-white font-sans h-screen flex flex-col">
 
@@ -83,8 +85,8 @@
         
             <% if (comment.user._id.toString() === user._id.toString()) { %>
               <div class="flex justify-end space-x-3 mt-4">
-                <button class="px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-500" onclick="openEditModal('<%= comment._id %>', '<%= comment.comment %>')">Edit</button>
-                <button class="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-500" onclick="openDeleteConfirmation('<%= comment._id %>')">Delete</button>
+                <button class="px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-500" onclick="openEditModal('<%= comment.uniqueString %>', '<%= comment.comment %>')">Edit</button>
+                <button class="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-500" onclick="openDeleteConfirmation('<%= comment.uniqueString %>')">Delete</button>
               </div>
             <% } %>
           </div>
@@ -92,7 +94,7 @@
       <% } %>
 
       <!-- Comment Form -->
-      <form action="/api/v1/users/<%= resource.slug %>/comments" method="POST" class="space-y-4 mt-6">
+      <form id="commentForm" action="javascript:void(0)" method="POST" class="space-y-4 mt-6">
         <textarea 
           name="comment" 
           rows="4" 
@@ -130,59 +132,72 @@
       </div>
     </div>
   </div>
-
   <script>
     let editCommentUniqueString = null;
     let deleteCommentUniqueString = null;
   
-    // Open Edit Comment Modal
+    // Initialize Notyf for notifications
+    const notyf = new Notyf({
+      duration: 3000, // Duration of the notification
+      position: { x: 'right', y: 'top' },  // Position of the notification
+    });
+  
+    // Open Edit Modal with existing comment content
     function openEditModal(uniqueString, commentText) {
       document.getElementById('editCommentModal').classList.remove('hidden');
       document.getElementById('editCommentText').value = commentText;
-      editCommentUniqueString = uniqueString;  // Store the uniqueString
+      editCommentUniqueString = uniqueString;  // Store the uniqueString for the comment being edited
     }
   
     // Open Delete Confirmation Modal
     function openDeleteConfirmation(uniqueString) {
       document.getElementById('deleteConfirmationModal').classList.remove('hidden');
-      deleteCommentUniqueString = uniqueString;  // Store the uniqueString
+      deleteCommentUniqueString = uniqueString;  // Store the uniqueString for the comment being deleted
     }
   
-    // Close any Modal
+    // Close any modal
     function closeModal() {
       document.getElementById('editCommentModal').classList.add('hidden');
       document.getElementById('deleteConfirmationModal').classList.add('hidden');
     }
   
-    // Save Edited Comment
+    // Save or edit a comment
     function saveComment() {
       const updatedCommentText = document.getElementById('editCommentText').value;
   
-      // Fetch request to save the comment
+      // If we're editing, send a PUT request with the uniqueString
       fetch(`/api/v1/users/<%= resource.slug %>/comments/${editCommentUniqueString}`, {
-        method: 'PUT',
+        method: 'PUT',  // Always PUT for edit operations
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ comment: updatedCommentText }),
       }).then(response => {
         if (response.ok) {
-          window.location.reload();  // Refresh the page to see updated comment
+          // Show success notification
+          notyf.success('Comment successfully saved!');
+          
+          // Reload comments after success
+          window.location.reload();  // Alternatively, you can reload just the comments section
         } else {
-          alert('Failed to update the comment.');
+          alert('Failed to post the comment.');
         }
       }).catch(err => {
         console.error('Error:', err);
       });
     }
   
-    // Delete Comment
+    // Delete comment
     function deleteComment() {
       fetch(`/api/v1/users/<%= resource.slug %>/comments/${deleteCommentUniqueString}`, {
         method: 'DELETE',
       }).then(response => {
         if (response.ok) {
-          window.location.reload();  // Refresh the page to see deleted comment removed
+          // Show success notification
+          notyf.success('Comment deleted successfully!');
+          
+          // Reload comments after deletion
+          window.location.reload();  // Alternatively, you can manually reload only the comments section
         } else {
           alert('Failed to delete the comment.');
         }
@@ -190,6 +205,14 @@
         console.error('Error:', err);
       });
     }
+  
+    // Form submission for new comments
+    document.getElementById('commentForm').addEventListener('submit', function(event) {
+      event.preventDefault();  // Prevent traditional form submission
+      
+      // Call saveComment function to add the new comment
+      saveComment();
+    });
   </script>
 </body>
 </html>
