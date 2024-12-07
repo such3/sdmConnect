@@ -106,7 +106,10 @@ router.route("/resource/:slug").delete(verifyJWT, deleteResource); // Resource d
 router.route("/profile").get(verifyJWT, getCurrentUser); // Fetch a specific user
 // Rating Routes (Secured for authenticated users)
 
-router.route("/profile").patch(verifyJWT, updateAccountDetails);
+// Updated route to handle profile updates (text and avatar)
+router
+  .route("/profile")
+  .patch(verifyJWT, upload.single("avatar"), updateAccountDetails);
 
 /**
  * @route POST /resource/:resourceId/rate

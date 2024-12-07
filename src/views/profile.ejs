@@ -1,194 +1,211 @@
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>sdmConnect - <%= user.username %> </title>
-    <link rel="stylesheet" href="/styles/dist-1.css" />
-    <link rel="stylesheet" href="/styles/notyf.min.css">
-    <script src="https://cdn.tailwindcss.com"></script>
 
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>sdmConnect - <%= user.username %></title>
+  <link rel="stylesheet" href="/styles/dist-1.css" />
+  <link rel="stylesheet" href="/styles/notyf.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/notyf/3.10.0/notyf.min.js" integrity="sha512-467grL09I/ffq86LVdwDzi86uaxuAhFZyjC99D6CC1vghMp1YAs+DqCgRvhEtZIKX+o9lR0F2bro6qniyeCMEQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> 
+  <style>
+    .spinner-border {
+      border-width: 0.3em;
+      border-color: #fff transparent #fff transparent;
+    }
 
-  </head>
-  <body class="bg-gray-900 font-sans text-white">
-    <!-- Navbar -->
-    <nav class="bg-gray-800 p-6 shadow-lg">
-      <div class="main-container flex justify-between items-center mx-auto max-w-7xl">
-        <a href="#" class="text-white text-3xl font-bold hover:text-blue-500 transition-all">sdmConnect</a>
-        <ul class="flex space-x-6">
-          <li><a href="/pages/upload" class="hover:text-blue-500 transition-all">Upload</a></li>
-          <li><a href="/pages/resources" class="hover:text-blue-500 transition-all">Find</a></li>
-          <!-- <li><a href="#" class="hover:text-blue-500 transition-all">Profile</a></li> -->
-          <li><a href="#" id="logout" class="hover:text-blue-500 transition-all">Logout</a></li>
-        </ul>
+    #loader {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 60;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      display: none;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-900 font-sans text-white">
+  <nav class="bg-gray-800 p-4 border-b border-gray-700 shadow-md">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      <a href="#" class="text-white text-2xl font-bold hover:text-blue-500 transition">sdmConnect</a>
+      <ul class="flex space-x-6">
+        <li><a href="/" class="hover:text-blue-500 transition">Home</a></li>
+        <li><a href="/pages/upload" class="hover:text-blue-500 transition">Upload</a></li>
+        <li><a href="/pages/resources" class="hover:text-blue-500 transition">Find</a></li>
+        <li><a href="#" id="logout" class="hover:text-blue-500 transition">Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="max-w-7xl mx-auto mt-8 p-4">
+    <div class="bg-gray-800 rounded-lg shadow-md p-6">
+      <div class="flex items-center space-x-6">
+        <div class="w-32 h-32 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full overflow-hidden border-4 border-gray-700">
+          <img src="<%= user.avatar %>" alt="User Avatar" class="w-full h-full object-cover">
+        </div>
+        <div class="flex-1">
+          <h2 class="text-3xl font-bold text-blue-400"><%= user.fullName %></h2>
+          <p class="text-gray-400">@<%= user.username %></p>
+          <p class="text-sm text-gray-300 italic"><%= user.bio %></p>
+          <p class="text-gray-400 mt-2">Email: <%= user.email %></p>
+        </div>
+        <button id="editProfileBtn" class="bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-600 transition-all shadow-md">Edit Profile</button>
       </div>
-    </nav>
+    </div>
 
-    <section class="max-w-7xl mx-auto p-8 bg-gray-800 rounded-lg shadow-lg mt-8">
-      <!-- User Profile Section -->
-<!-- User Profile Section -->
-<div class="flex flex-col md:flex-row items-center justify-between max-w-7xl mx-auto p-8 space-y-8 md:space-y-0">
-  <!-- User Info -->
-  <div class="flex flex-col items-center md:items-start space-y-6 md:space-y-4 text-center md:text-left w-full md:w-2/4">
-    <h2 class="text-4xl font-semibold text-blue-400"><%= user.fullName %></h2>
-    <p class="text-lg text-gray-400"><%= user.email %></p>
-    <p class="text-sm text-gray-500">@ <%= user.username %></p>
-    <p class="text-sm text-gray-300 italic"><%= user.bio %></p>
-  </div>
+    <hr class="my-8 border-gray-700">
 
-  <!-- User Avatar (Styled and Positioned to the Right) -->
-  <div class="flex justify-center md:justify-end md:w-1/4 space-y-6 md:space-y-0">
-    <div class="w-40 h-40 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl shadow-xl overflow-hidden">
-      <img src="<%= user.avatar %>" alt="User Avatar" class="w-full h-full object-cover">
+    <div>
+      <h3 class="text-xl font-semibold text-gray-200 mb-4">Uploaded Resources</h3>
+      <% if (user.resources && user.resources.length > 0) { %>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <% user.resources.forEach(function(resource) { %>
+            <div class="bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-lg transition-all border border-gray-700">
+              <h4 class="text-lg font-bold text-blue-400 mb-2"><%= resource.title %></h4>
+              <p class="text-sm text-gray-400 mb-4">Click to view details</p>
+              <a href="/pages/resource/<%= resource.slug %>" class="bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-600 transition">View Resource</a>
+            </div>
+          <% }); %>
+        </div>
+      <% } else { %>
+        <p class="text-gray-400">No resources uploaded yet.</p>
+      <% } %>
     </div>
   </div>
 
-  <!-- Edit Profile Button -->
-  <div class="flex justify-center md:justify-start w-full md:w-1/4">
-    <button id="editProfileBtn" class="bg-blue-500 text-white py-2 px-8 rounded-full hover:bg-blue-600 transition-all shadow-md hover:shadow-lg">
-      Edit Profile
-    </button>
+  <div id="editProfileModal" class="fixed inset-0 bg-black bg-opacity-70 hidden flex justify-center items-center z-50">
+    <div class="bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-md relative">
+      <button id="closeProfileModal" class="absolute top-2 right-2 text-white text-2xl">&times;</button>
+      <h3 class="text-2xl font-semibold text-gray-200 mb-4">Edit Profile</h3>
+
+      <form id="editProfileForm" enctype="multipart/form-data">
+        <div class="mb-4">
+          <label for="fullName" class="block text-gray-400">Full Name</label>
+          <input type="text" id="fullName" name="fullName" value="<%= user.fullName %>" class="w-full p-3 mt-2 rounded-lg bg-gray-700 text-white border border-gray-600" required />
+        </div>
+        <div class="mb-4">
+          <label for="bio" class="block text-gray-400">Bio</label>
+          <textarea id="bio" name="bio" class="w-full p-3 mt-2 rounded-lg bg-gray-700 text-white border border-gray-600" required><%= user.bio %></textarea>
+        </div>
+        <div class="mb-6">
+          <label class="block text-gray-400 mb-2">Profile Photo</label>
+          <input type="file" id="profilePhoto" name="avatar" accept="image/*" class="bg-blue-500 text-white py-2 px-4 rounded-full cursor-pointer hover:bg-blue-600 transition" />
+        </div>
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition">Save</button>
+      </form>
+
+      <div id="loader" class="absolute inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden z-60">
+        <div class="spinner-border animate-spin h-16 w-16 border-t-4 border-blue-400 rounded-full"></div>
+      </div>
+    </div>
   </div>
-</div>
+  <link rel="stylesheet" href="/scripts/notyf.min.js">
+</body>
 
+<script>
+  const notyf = new Notyf();
 
-<!-- Resources Section -->
-<div>
-  <h3 class="text-2xl font-semibold mb-6 text-gray-100">Resources Uploaded</h3>
-  <% if (user.resources && user.resources.length > 0) { %>
-    <ul class="space-y-6">
-      <% user.resources.forEach(function(resource) { %>
-        <li class="bg-gray-700 p-4 rounded-lg flex justify-between items-center shadow-md hover:shadow-lg transition-all">
-          <div class="text-white">
-            <h4 class="text-xl font-semibold mb-2"><%= resource.title %></h4>
-            <!-- Optional Description -->
-            <p class="text-sm text-gray-400">Click to view details</p>
-          </div>
-          <a href="/pages/resource/<%= resource.slug %>" class="bg-blue-500 text-white py-2 px-6 rounded-full hover:bg-blue-600 transition-all">View</a>
-        </li>
-      <% }); %>
-    </ul>
-  <% } else { %>
-    <p class="text-gray-400">No resources uploaded yet.</p>
-  <% } %>
-</div>
-<!-- Edit Profile Modal -->
-<div id="editProfileModal" class="fixed inset-0 bg-gray-800 bg-opacity-75 hidden justify-center items-center z-50">
-  <div class="absolute inset-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-700 p-6 rounded-lg w-96 shadow-xl">
-    <h3 class="text-2xl font-semibold mb-4 text-gray-200">Edit Profile</h3>
-    <form id="editProfileForm">
-      <div class="mb-4">
-        <label for="fullName" class="block text-gray-400">Full Name</label>
-        <input type="text" id="fullName" class="w-full p-3 mt-2 rounded-lg bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-blue-500" value="<%= user.fullName %>" required />
-      </div>
-      <div class="mb-4">
-        <label for="bio" class="block text-gray-400">Bio</label>
-        <textarea id="bio" class="w-full p-3 mt-2 rounded-lg bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-blue-500" required><%= user.bio %></textarea>
-      </div>
-      <div class="flex justify-between">
-        <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-600 transition-all">Save</button>
-        <button type="button" id="closeProfileModal" class="bg-red-500 text-white py-2 px-4 rounded-full hover:bg-red-600 transition-all">Cancel</button>
-      </div>
-    </form>
-  </div>
-</div>
+  // Modal Toggle
+  document.getElementById("editProfileBtn")?.addEventListener("click", () => {
+    document.getElementById("editProfileModal")?.classList.remove("hidden");
+  });
 
+  // Close the modal
+  document.getElementById("closeProfileModal")?.addEventListener("click", () => {
+    document.getElementById("editProfileModal")?.classList.add("hidden");
+  });
 
+  const profilePhotoInput = document.getElementById('profilePhoto');
+  const currentProfilePhoto = document.getElementById('currentProfilePhoto');
+  
+  // Profile photo input preview
+  if (profilePhotoInput) {
+    profilePhotoInput.addEventListener('change', function (event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          currentProfilePhoto.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
 
-    <script src="/scripts/notyf.min.js"></script>
-    <script>
-  // Initialize Notyf (Notification library)
-const notyf = new Notyf();
-
-// Open and close the profile edit modal
-document.getElementById("editProfileBtn")?.addEventListener("click", function () {
-  document.getElementById("editProfileModal")?.classList.remove("hidden");
-});
-
-document.getElementById("closeProfileModal")?.addEventListener("click", function () {
-  document.getElementById("editProfileModal")?.classList.add("hidden");
-});
-
-// Handle profile update
-const editProfileForm = document.getElementById('editProfileForm');
-
-if (editProfileForm) {
-  editProfileForm.addEventListener('submit', async function (event) {
-    event.preventDefault(); // Prevent default form submission
-
+  // Handle form submission
+  document.getElementById('editProfileForm').addEventListener('submit', async function (event) {
+    event.preventDefault();
+    
     const fullName = document.getElementById('fullName').value;
     const bio = document.getElementById('bio').value;
-
-    // Retrieve the access token from the cookies or localStorage
-    const accessToken = document.cookie.split('; ').find(row => row.startsWith('accessToken=')).split('=')[1];
+    const photoFile = profilePhotoInput.files[0];
+    
+    const formData = new FormData();
+    formData.append('fullName', fullName);
+    formData.append('bio', bio);
+    if (photoFile) formData.append('avatar', photoFile);
 
     try {
-      // Send a PATCH request to update the profile
+      // Show loader
+      document.getElementById("loader").style.display = "flex";
+
       const response = await fetch('http://localhost:3000/api/v1/users/profile', {
         method: 'PATCH',
+        body: formData,
+        credentials: 'include'
+      });
+
+      document.getElementById("loader").style.display = "none"; // Hide loader after response
+
+      if (response.ok) {
+        const data = await response.json();
+        notyf.success('Profile updated successfully!');
+        document.getElementById("editProfileModal").classList.add("hidden");
+        window.location.reload();
+      } else {
+        const errorData = await response.json();
+        notyf.error(errorData.message || 'Failed to update profile');
+      }
+    } catch (error) {
+      document.getElementById("loader").style.display = "none"; // Hide loader in case of error
+      console.error('Error:', error);
+      notyf.error("An unexpected error occurred.");
+    }
+  });
+
+  // Handle logout functionality
+  const logoutLink = document.getElementById("logout");
+  logoutLink?.addEventListener("click", async function (event) {
+    event.preventDefault();
+
+    try {
+      const response = await fetch('/api/v1/users/logout', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`  // Send the Bearer token in the header
         },
-        body: JSON.stringify({ fullName, bio })
+        credentials: 'include'
       });
 
       if (response.ok) {
-        // Profile update successful
-        notyf.success('Profile updated successfully!');
-        // Close the modal after successful update
-        document.getElementById("editProfileModal")?.classList.add("hidden");
+        notyf.success("Successfully logged out!");
+        setTimeout(() => {
+          window.location.href = '/pages/login?message=Successfully Logged Out';
+        }, 1500);
       } else {
-        // Handle failed update, show error message
-        const errorData = await response.json();
-        notyf.error(`Error updating profile: ${errorData.message || 'Something went wrong'}`);
+        const errorMessage = await response.text();
+        notyf.error(`Logout failed: ${errorMessage}`);
       }
     } catch (error) {
-      // Handle any errors that occur during the request
-      notyf.error('An error occurred while updating the profile. Please try again.');
+      notyf.error("An error occurred during logout. Please try again.");
     }
   });
-}
-
-// Handle logout functionality
-const logoutLink = document.getElementById("logout");
-
-logoutLink?.addEventListener("click", async function (event) {
-  event.preventDefault(); // Prevent the default action of the link
-
-  // Retrieve the access token from cookies or localStorage
-  const accessToken = document.cookie.split('; ').find(row => row.startsWith('accessToken=')).split('=')[1];
-
-  try {
-    // Make a POST request to log the user out
-    const response = await fetch('/api/v1/users/logout', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`,  // Send the Bearer token in the header
-      },
-      credentials: 'include' // Make sure cookies are included in the request
-    });
-
-    // Check if the response was successful (status code 200-299)
-    if (response.ok) {
-      // If logout was successful, show success notification
-      notyf.success("Successfully logged out!");
-      // Redirect after a short delay to allow the user to see the notification
-      setTimeout(() => {
-        window.location.href = '/pages/login?message=Successfully Logged Out'; // Redirect to login page
-      }, 1500); // Delay for 1.5 seconds
-    } else {
-      // Handle logout error (e.g., show an error message)
-      const errorMessage = await response.text();
-      notyf.error(`Logout failed: ${errorMessage}`);
-    }
-  } catch (error) {
-    // Handle any network or unexpected errors
-    notyf.error("An error occurred during logout. Please try again.");
-  }
-});
-
-    </script>
-    
-  </body>
+</script>
 </html>

@@ -1,331 +1,195 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>sdmConnect - <%= resource.title %></title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>sdmConnect - <%= resource.title %></title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white font-sans h-screen flex flex-col">
 
-    <style>
-      .comment-section {
-  margin-top: 30px;
-}
+  <!-- Navbar -->
+  <nav class="bg-gray-800 p-4 shadow-md">
+    <div class="container mx-auto flex justify-between items-center">
+      <a href="/" class="text-white text-3xl font-bold hover:text-blue-500">sdmConnect</a>
+      <ul class="flex space-x-6 text-lg">
+        <li><a href="/pages/upload" class="hover:text-blue-500">Upload</a></li>
+        <li><a href="/pages/find" class="hover:text-blue-500">Find</a></li>
+        <li><a href="/pages/profile" class="hover:text-blue-500">Profile</a></li>
+      </ul>
+    </div>
+  </nav>
 
-.comments-list {
-  margin-bottom: 20px;
-}
-
-.comment {
-  background-color: #f9f9f9;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 5px;
-}
-
-.comment-header {
-  display: flex;
-  align-items: center;
-}
-
-.comment-avatar {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  margin-right: 10px;
-}
-
-.comment-author {
-  font-weight: bold;
-}
-
-.comment-date {
-  margin-left: auto;
-  font-size: 0.8rem;
-  color: #888;
-}
-
-.comment-text {
-  margin-top: 10px;
-}
-
-.comment-actions {
-  margin-top: 10px;
-}
-
-.comment-actions button {
-  margin-right: 10px;
-}
-
-#commentForm textarea {
-  width: 100%;
-  padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 10px;
-}
-
-#commentForm button {
-  padding: 10px 20px;
-  background-color: #007BFF;
-  color: white;
-  border: none;
-  border-radius: 5px;
-}
-
-    </style>
-  </head>
-  <body class="bg-gray-900 font-sans text-white h-screen flex flex-col">
-    <!-- Navbar -->
-    <nav class="bg-gray-800 p-4 shadow-md">
-      <div class="container mx-auto flex justify-between items-center">
-        <a href="/" class="text-white text-3xl font-semibold hover:text-blue-500">sdmConnect</a>
-        <ul class="flex space-x-6 text-lg">
-          <li><a href="/pages/upload" class="hover:text-blue-500">Upload</a></li>
-          <li><a href="/pages/upload" class="hover:text-blue-500">Find</a></li>
-          <li><a href="/pages/profile" class="hover:text-blue-500">Profile</a></li>
-        </ul>
-      </div>
-    </nav>
-
-    <!-- Main Content Section -->
-    <section class="max-w-7xl mx-auto p-8 bg-gray-800 rounded-lg shadow-lg mt-8 flex-1">
-      <div class="flex flex-col lg:flex-row items-center justify-between space-y-6 lg:space-y-0">
-
-        <!-- Owner Profile Section -->
-        <div class="flex flex-col items-center space-y-4 md:space-y-6 w-full lg:w-1/3">
-          <!-- Owner Avatar -->
-          <div class="w-32 h-32 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full overflow-hidden shadow-lg">
-            <img src="<%= resource.owner.avatar %>" alt="Owner Avatar" class="w-full h-full object-cover">
-          </div>
-          <div class="text-center">
-            <h3 class="text-2xl font-semibold text-white"><%= resource.owner.fullName %></h3>
-            <p class="text-sm text-gray-400">@<%= resource.owner.username %></p>
-          </div>
-          
+  <!-- Main Content -->
+  <main class="container mx-auto max-w-7xl mt-8 p-6 bg-gray-800 rounded-lg shadow-lg flex-1 space-y-8">
+    <!-- Resource Section -->
+    <section class="flex flex-col lg:flex-row items-center lg:items-start space-y-8 lg:space-y-0 lg:space-x-8">
+      <!-- Owner Profile Section -->
+      <div class="flex flex-col items-center space-y-4 w-full lg:w-1/3">
+        <div class="w-32 h-32 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full overflow-hidden shadow-lg">
+          <img src="<%= resource.owner.avatar %>" alt="Owner Avatar" class="w-full h-full object-cover">
         </div>
-
-        <!-- Resource Details Section -->
-        <div class="w-full lg:w-2/3 space-y-6">
-          <!-- Title & Description -->
-          <div class="space-y-4">
-            <h2 class="text-3xl font-semibold text-blue-400"><%= resource.title %></h2>
-            <p class="text-lg text-gray-300"><%= resource.description %></p>
-          </div>
-
-          <!-- Resource Info: Semester and Branch -->
-          <div class="flex space-x-8">
-            <div class="flex items-center space-x-2 text-gray-400">
-              <span class="text-lg font-semibold">Semester:</span>
-              <span class="text-lg text-white"><%= resource.semester %></span>
-            </div>
-            <div class="flex items-center space-x-2 text-gray-400">
-              <span class="text-lg font-semibold">Branch:</span>
-              <span class="text-lg text-white"><%= resource.branch %></span>
-            </div>
-          </div>
-
-          <!-- Action Buttons (Download / Open in Browser) -->
-          <div class="flex space-x-6 justify-center">
-            <a href="<%= resource.file %>" class="bg-blue-500 text-white py-3 px-6 rounded-full text-lg hover:bg-blue-600 transition duration-300 w-full md:w-auto text-center">
-              <i class="fas fa-download mr-2"></i> Download Resource
-            </a>
-            <a href="<%= resource.file %>" target="_blank" class="bg-gray-700 text-white py-3 px-6 rounded-full text-lg hover:bg-gray-800 transition duration-300 w-full md:w-auto text-center">
-              <i class="fas fa-external-link-alt mr-2"></i> Open in Browser
-            </a>
-          </div>
+        <div class="text-center">
+          <h3 class="text-2xl font-bold"><%= resource.owner.fullName %></h3>
+          <p class="text-sm text-gray-400">@<%= resource.owner.username %></p>
         </div>
       </div>
 
-      <!-- Blocked Resource Warning (if applicable) -->
-      <% if (resource.isBlocked) { %>
-        <div class="bg-red-500 text-white p-6 mt-8 rounded-lg text-center">
-          <h3 class="text-2xl font-semibold">This resource has been blocked!</h3>
-          <p class="text-lg mt-4">This resource is no longer available for download.</p>
+      <!-- Resource Details Section -->
+      <div class="w-full lg:w-2/3 space-y-6">
+        <div>
+          <h2 class="text-3xl font-bold text-blue-400"><%= resource.title %></h2>
+          <p class="text-lg text-gray-300 mt-2"><%= resource.description %></p>
         </div>
-      <% } %>
-
-      <!-- Created/Updated Dates -->
-      <div class="text-center mt-8 text-gray-400">
-        <p>Created on: <%= new Date(resource.createdAt).toLocaleDateString() %></p>
-        <p>Last Updated on: <%= new Date(resource.updatedAt).toLocaleDateString() %></p>
+        <div class="flex space-x-8">
+          <div class="text-gray-400">
+            <span class="font-semibold">Semester:</span>
+            <span class="text-white"><%= resource.semester %></span>
+          </div>
+          <div class="text-gray-400">
+            <span class="font-semibold">Branch:</span>
+            <span class="text-white"><%= resource.branch %></span>
+          </div>
+        </div>
+        <div class="flex space-x-4">
+          <a href="<%= resource.file %>" class="bg-blue-500 text-white px-6 py-3 rounded-full text-lg hover:bg-blue-600 transition">
+            Download Resource
+          </a>
+          <a href="<%= resource.file %>" target="_blank" class="bg-gray-700 text-white px-6 py-3 rounded-full text-lg hover:bg-gray-800 transition">
+            Open in Browser
+          </a>
+        </div>
       </div>
     </section>
 
-<!-- Comments Section -->
-<section class="py-10 bg-gray-800">
-  <div class="max-w-4xl mx-auto bg-gray-700 p-6 rounded-lg shadow-lg">
-    <h2 class="text-2xl font-semibold text-white mb-6">Comments</h2>
-
-    <!-- Render Comments -->
-    <% if (comments && comments.length > 0) { %>
-      <div class="comments-list space-y-6">
+    <!-- Comments Section -->
+    <section id="comments-section" class="bg-gray-900 rounded-lg p-6 shadow-lg space-y-6">
+      <h3 class="text-2xl font-bold text-blue-400">Comments</h3>
+      
+      <!-- Check for Comments -->
+      <% if (comments.length === 0) { %>
+        <p class="text-gray-400 text-center">No comments yet. Be the first to share your thoughts!</p>
+      <% } else { %>
         <% comments.forEach(comment => { %>
-          <div class="flex justify-between items-center p-4 bg-gray-600 rounded-lg shadow-md">
-            <div class="flex items-center">
-              <img
-                src="<%= comment.user.avatar %>"
-                alt="<%= comment.user.fullName %>"
-                class="w-12 h-12 rounded-full mr-3"
-              />
+          <div id="comment-<%= comment._id %>" class="bg-gray-800 p-4 rounded-lg border border-gray-700 hover:shadow-md">
+            <div class="flex items-center space-x-4">
+              <img src="<%= comment.user.avatar %>" alt="<%= comment.user.username %>" class="w-12 h-12 rounded-full border-2 border-gray-600">
               <div>
-                <p class="text-white font-semibold"><%= comment.user.fullName %></p>
-                <p class="text-gray-400 text-sm">Posted on: <%= new Date(comment.createdAt).toLocaleString() %></p>
+                <p class="text-lg font-semibold"><%= comment.user.fullName %></p>
+                <p class="text-sm text-gray-400">@<%= comment.user.username %></p>
               </div>
             </div>
-
-            <!-- Edit and Delete buttons -->
+            <p class="text-gray-300 mt-4"><%= comment.comment %></p>
+        
             <% if (comment.user._id.toString() === user._id.toString()) { %>
-              <div class="flex items-center space-x-2">
-                <button class="text-blue-400 text-sm" onclick="openEditModal('<%= comment._id %>', '<%= comment.comment %>')">Edit</button>
-                <button class="text-red-400 text-sm" onclick="openDeleteConfirmation('<%= comment._id %>')">Delete</button>
+              <div class="flex justify-end space-x-3 mt-4">
+                <button class="px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-500" onclick="openEditModal('<%= comment._id %>', '<%= comment.comment %>')">Edit</button>
+                <button class="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-500" onclick="openDeleteConfirmation('<%= comment._id %>')">Delete</button>
               </div>
             <% } %>
           </div>
-          <p class="text-gray-300 mb-4 px-4"><%= comment.comment %></p>
         <% }) %>
+      <% } %>
+
+      <!-- Comment Form -->
+      <form action="/api/v1/users/<%= resource.slug %>/comments" method="POST" class="space-y-4 mt-6">
+        <textarea 
+          name="comment" 
+          rows="4" 
+          placeholder="Write your comment here..." 
+          class="w-full bg-gray-800 text-white rounded-lg p-4 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" 
+          required>
+        </textarea>
+        <button 
+          type="submit" 
+          class="bg-blue-500 text-white px-6 py-3 rounded-full text-lg hover:bg-blue-600 transition w-full md:w-auto">
+          Post Comment
+        </button>
+      </form>
+    </section>
+  </main>
+
+  <!-- Modals -->
+  <div id="editCommentModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-gray-700 p-6 rounded-lg shadow-lg max-w-md w-full">
+      <h3 class="text-2xl font-semibold mb-4">Edit Comment</h3>
+      <textarea id="editCommentText" class="w-full p-4 bg-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500"></textarea>
+      <div class="mt-4 flex space-x-4">
+        <button class="w-full px-4 py-2 bg-gray-500 text-white rounded-lg" onclick="closeModal()">Cancel</button>
+        <button class="w-full px-4 py-2 bg-blue-500 text-white rounded-lg" onclick="saveComment()">Save</button>
       </div>
-    <% } else { %>
-      <p class="text-gray-400 text-center mt-4">No comments yet. Be the first to comment!</p>
-    <% } %>
-
-    <!-- Add Comment Form -->
-    <form action="/api/v1/users/<%= resource.slug %>/comments" method="POST" class="mt-6">
-      <textarea
-        name="comment"
-        class="w-full p-4 bg-gray-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
-        placeholder="Write your comment here..."
-        required
-      ></textarea>
-      <button
-        type="submit"
-        class="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition"
-      >
-        Add Comment
-      </button>
-    </form>
-  </div>
-</section>
-
-<!-- Edit Comment Modal -->
-<div id="editCommentModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden">
-  <div class="bg-gray-700 p-6 rounded-lg shadow-xl max-w-md w-full">
-    <h3 class="text-2xl font-semibold text-white mb-4">Edit Your Comment</h3>
-    <textarea id="editCommentText" class="w-full p-4 bg-gray-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4" rows="4"></textarea>
-    <div class="flex gap-4">
-      <button class="w-full bg-gray-500 text-white p-2 rounded-lg" onclick="closeModal()">Cancel</button>
-      <button class="w-full bg-blue-500 text-white p-2 rounded-lg" onclick="saveComment()">Save</button>
     </div>
   </div>
-</div>
 
-<!-- Delete Confirmation Modal -->
-<div id="deleteConfirmationModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden">
-  <div class="bg-gray-700 p-6 rounded-lg shadow-xl max-w-md w-full">
-    <h3 class="text-2xl font-semibold text-white mb-4">Are you sure you want to delete this comment?</h3>
-    <div class="flex gap-4">
-      <button class="w-full bg-gray-500 text-white p-2 rounded-lg" onclick="closeModal()">Cancel</button>
-      <button class="w-full bg-red-500 text-white p-2 rounded-lg" onclick="deleteComment()">Delete</button>
+  <div id="deleteConfirmationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-gray-700 p-6 rounded-lg shadow-lg max-w-md w-full">
+      <h3 class="text-2xl font-semibold mb-4">Confirm Deletion</h3>
+      <div class="flex space-x-4">
+        <button class="w-full px-4 py-2 bg-gray-500 text-white rounded-lg" onclick="closeModal()">Cancel</button>
+        <button class="w-full px-4 py-2 bg-red-500 text-white rounded-lg" onclick="deleteComment()">Delete</button>
+      </div>
     </div>
   </div>
-</div>
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-center text-gray-400 py-6 mt-8">
-      <p>&copy; 2024 sdmConnect | All Rights Reserved</p>
-    </footer>
 
-    <!-- Logout Handling (JavaScript) -->
-    <script>
-      function openEditModal(commentId, commentText) {
-    document.getElementById('editCommentModal').style.display = 'flex';
-    document.getElementById('editCommentText').value = commentText;
-    window.editCommentId = commentId;  // Store the commentId to be used for saving the comment
-  }
-
-  function closeModal() {
-    document.getElementById('editCommentModal').style.display = 'none';
-    document.getElementById('deleteConfirmationModal').style.display = 'none';
-  }
-
-  function saveComment() {
-    const updatedCommentText = document.getElementById('editCommentText').value;
-    // Submit the updated comment data here (use AJAX or a form submission)
-    console.log('Updated comment:', updatedCommentText, 'for commentId:', window.editCommentId);
-    closeModal();
-  }
-
-  function openDeleteConfirmation(commentId) {
-    document.getElementById('deleteConfirmationModal').style.display = 'flex';
-    window.deleteCommentId = commentId;  // Store the commentId to be used for deletion
-  }
-
-  function deleteComment() {
-    const commentId = window.deleteCommentId;
-    // Perform the deletion (use AJAX or a form submission)
-    console.log('Deleting comment with ID:', commentId);
-    closeModal();
-  }
-      const logoutLink = document.getElementById("logout");
-
-      logoutLink?.addEventListener("click", async function (event) {
-        event.preventDefault(); // Prevent the default action of the link
-
-        try {
-          const response = await fetch('/api/v1/users/logout', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              // If you're using the accessToken in a header, make sure it is sent
-              'Authorization': `Bearer ${document.cookie.accessToken}`,
-            },
-            credentials: 'include',
-          });
-
-          if (response.ok) {
-            window.location.href = '/pages/login?message=Successfully Logged Out'; // Redirect to login
-          } else {
-            alert("Logout failed");
-          }
-        } catch (error) {
-          console.error("Logout error:", error);
-          alert("An error occurred during logout. Please try again.");
+  <script>
+    let editCommentUniqueString = null;
+    let deleteCommentUniqueString = null;
+  
+    // Open Edit Comment Modal
+    function openEditModal(uniqueString, commentText) {
+      document.getElementById('editCommentModal').classList.remove('hidden');
+      document.getElementById('editCommentText').value = commentText;
+      editCommentUniqueString = uniqueString;  // Store the uniqueString
+    }
+  
+    // Open Delete Confirmation Modal
+    function openDeleteConfirmation(uniqueString) {
+      document.getElementById('deleteConfirmationModal').classList.remove('hidden');
+      deleteCommentUniqueString = uniqueString;  // Store the uniqueString
+    }
+  
+    // Close any Modal
+    function closeModal() {
+      document.getElementById('editCommentModal').classList.add('hidden');
+      document.getElementById('deleteConfirmationModal').classList.add('hidden');
+    }
+  
+    // Save Edited Comment
+    function saveComment() {
+      const updatedCommentText = document.getElementById('editCommentText').value;
+  
+      // Fetch request to save the comment
+      fetch(`/api/v1/users/<%= resource.slug %>/comments/${editCommentUniqueString}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ comment: updatedCommentText }),
+      }).then(response => {
+        if (response.ok) {
+          window.location.reload();  // Refresh the page to see updated comment
+        } else {
+          alert('Failed to update the comment.');
         }
+      }).catch(err => {
+        console.error('Error:', err);
       });
-
-      function deleteComment(commentSlug) {
-      if (confirm("Are you sure you want to delete this comment?")) {
-        fetch(`/resources/<%= resource.slug %>/comments/${commentSlug}`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        }).then(response => {
-          if (response.ok) {
-            document.getElementById('comment-' + commentSlug).remove();
-          } else {
-            alert("Failed to delete comment");
-          }
-        });
-      }
     }
-
-    function editComment(commentSlug) {
-      const newComment = prompt("Edit your comment:");
-      if (newComment) {
-        fetch(`/resources/<%= resource.slug %>/comments/${commentSlug}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ comment: newComment })
-        }).then(response => {
-          if (response.ok) {
-            window.location.reload(); // Refresh to show updated comment
-          } else {
-            alert("Failed to edit comment");
-          }
-        });
-      }
+  
+    // Delete Comment
+    function deleteComment() {
+      fetch(`/api/v1/users/<%= resource.slug %>/comments/${deleteCommentUniqueString}`, {
+        method: 'DELETE',
+      }).then(response => {
+        if (response.ok) {
+          window.location.reload();  // Refresh the page to see deleted comment removed
+        } else {
+          alert('Failed to delete the comment.');
+        }
+      }).catch(err => {
+        console.error('Error:', err);
+      });
     }
-    </script>
-  </body>
+  </script>
+</body>
 </html>

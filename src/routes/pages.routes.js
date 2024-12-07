@@ -15,7 +15,7 @@ const router = new Router();
 router.get("/register", isAuthenticated, (req, res) => {
   // Check if user is already logged in, if so, redirect to profile
   if (req.user) {
-    return res.redirect("/profile");
+    return res.redirect("/pages/profile");
   }
 
   // Check if there's any error passed and render the register page accordingly
@@ -27,7 +27,7 @@ router.get("/register", isAuthenticated, (req, res) => {
 router.get("/login", isAuthenticated, (req, res) => {
   // Check if user is already logged in, if so, redirect to profile
   if (req.user) {
-    return res.redirect("/profile");
+    return res.redirect("/pages/profile");
   }
 
   // Check if there's any error passed and render the login page accordingly
@@ -75,15 +75,17 @@ router.get("/profile", verifyJWT, async (req, res) => {
       message: req.query.message || "",
       error: req.query.error || "",
     });
-    console.log("User : ", user);
+    // console.log("User : ", user);
   } catch (err) {
     console.error("Error fetching user data:", err);
     return res.redirect("/pages/login?error=Error fetching user data");
   }
 });
+
+// Route to render the resource page by slug
 router.get("/resource/:slug", verifyJWT, async (req, res) => {
   const { slug } = req.params; // Get the slug from the URL parameter
-  console.log("Requested Slug:", slug); // Debugging the slug
+  // console.log("Requested Slug:", slug); // Debugging the slug
 
   try {
     // Fetch the resource from the existing endpoint
@@ -95,8 +97,8 @@ router.get("/resource/:slug", verifyJWT, async (req, res) => {
         },
       }
     );
-    console.log("API Response Status:", response.status); // Log the response status
-
+    // console.log("API Response Status for Resource:", response.status); // Log the response status
+    // console.log("Response : ", response);
     if (!response.ok) {
       return res.status(404).render("error", {
         message: "Resource not found",
@@ -106,29 +108,35 @@ router.get("/resource/:slug", verifyJWT, async (req, res) => {
 
     // Parse the JSON response from the resource API
     const resourceData = await response.json();
-    console.log("Fetched Resource Data:", resourceData); // Log the fetched resource data
+    // console.log("Fetched Resource Data:", resourceData); // Log the fetched resource data
 
     if (!resourceData?.data) {
-      throw new Error("Invalid response structure");
+      throw new Error("Invalid response structure for resource");
     }
+    // console.log("Resource Data:", resourceData.data); // Log the resource data
 
     // Fetch comments for the resource
     const commentsResponse = await fetch(
-      `http://localhost:3000/api/v1/users/resources/${slug}/comments`,
+      `http://localhost:3000/api/v1/users/${slug}/comments`,
       {
         headers: {
           Authorization: `Bearer ${req.cookies.accessToken}`,
         },
       }
     );
+    console.log("API Response Status for Comments:", commentsResponse.status); // Log the response status
 
-    const commentsData = await commentsResponse;
+    // Parse the JSON response from the comments API
+    const commentsData = await commentsResponse.json();
     console.log("Fetched Comments Data:", commentsData); // Log the fetched comments data
+
+    // Check if comments exist, if not pass an empty array
+    const comments = commentsData.comments || [];
 
     // Render the resource page with the fetched resource and comments data
     res.render("resource", {
       resource: resourceData.data, // Pass the resource data
-      comments: commentsData.comments || [], // Pass the comments (empty array if no comments)
+      comments: comments, // Pass the comments (empty array if no comments)
       user: req.user, // Pass user data for authentication check (if needed for edit/delete actions)
     });
   } catch (err) {
@@ -140,10 +148,6 @@ router.get("/resource/:slug", verifyJWT, async (req, res) => {
   }
 });
 
-router.get("/upload", verifyJWT, async (req, res) => {
-  res.render("upload");
-});
-
 // Route to handle login errors (when user is unauthenticated)
 router.get("/login-error", (req, res) => {
   // Pass the error message and the original page the user was trying to visit
@@ -152,12 +156,13 @@ router.get("/login-error", (req, res) => {
     redirectPage: req.query.redirect,
   });
 });
+
 // Route to fetch and render the resources page with filters
 router.get("/resources", async (req, res) => {
   const { semester, branch, page = 1, searchQuery = "" } = req.query; // Get filter parameters and search term from query string
-  console.log("Search Query:", searchQuery); // Debugging the search query
+  // console.log("Search Query:", searchQuery); // Debugging the search query
   // Construct the API URL with optional filters and search query
-  let apiUrl = `http://localhost:3000/api/v1/users/resources?page=${page}`;
+  let apiUrl = `http://localhost:3000/api/v1/resources?page=${page}`;
 
   // Add filters if they are provided
   if (semester) apiUrl += `&semester=${semester}`;
@@ -180,7 +185,7 @@ router.get("/resources", async (req, res) => {
 
   try {
     const response = await fetch(apiUrl, fetchOptions);
-    console.log("Response  : ", response);
+    // console.log("Response  : ", response);
     // Check if the response is OK and the content is JSON
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
@@ -234,6 +239,14 @@ router.get("/resources", async (req, res) => {
       searchQuery: searchQuery, // Include the search query in case of error
     });
   }
+});
+
+router.get("/home", verifyJWT, async (req, res) => {
+  res.redirect("/pages/profile");
+});
+
+router.get("/upload", verifyJWT, async (req, res) => {
+  res.render("upload");
 });
 
 export default router;

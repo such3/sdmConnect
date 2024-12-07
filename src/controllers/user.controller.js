@@ -204,45 +204,51 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     );
 });
 
-// Update account details and return JSON response using ApiResponse
+// Combined controller for updating account details and avatar
 const updateAccountDetails = asyncHandler(async (req, res) => {
   const { fullName, bio } = req.body;
+  let avatarUrl = null;
+
+  // Validate full name and bio
   if (!fullName || !bio) {
     throw new ApiError(400, "Full Name and Bio are required");
   }
 
+  // If there's a new avatar file, upload it
+  if (req.file) {
+    const avatarLocalPath = req.file?.path;
+    if (!avatarLocalPath) {
+      throw new ApiError(400, "Avatar file is missing");
+    }
+
+    const avatar = await uploadOnCloudinary(avatarLocalPath);
+    if (!avatar?.url) {
+      throw new ApiError(400, "Error while uploading avatar");
+    }
+    avatarUrl = avatar.url;
+  }
+
+  // Update account details
+  const updateData = {
+    fullName,
+    bio,
+  };
+
+  // If avatar is available, include it in the update
+  if (avatarUrl) {
+    updateData.avatar = avatarUrl;
+  }
+
+  // Update user in the database
   const updatedUser = await User.findByIdAndUpdate(
     req.user._id,
-    { $set: { fullName, bio } },
+    { $set: updateData },
     { new: true }
   ).select("-password");
 
   return res
     .status(200)
-    .json(new ApiResponse(200, updatedUser, "Account updated successfully"));
-});
-
-// Update user avatar and return JSON response using ApiResponse
-const updateUserAvatar = asyncHandler(async (req, res) => {
-  const avatarLocalPath = req.file?.path;
-  if (!avatarLocalPath) {
-    throw new ApiError(400, "Avatar file is missing");
-  }
-
-  const avatar = await uploadOnCloudinary(avatarLocalPath);
-  if (!avatar?.url) {
-    throw new ApiError(400, "Error while uploading avatar");
-  }
-
-  const updatedUser = await User.findByIdAndUpdate(
-    req.user._id,
-    { avatar: avatar.url },
-    { new: true }
-  ).select("-password");
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, updatedUser, "Avatar updated successfully"));
+    .json(new ApiResponse(200, updatedUser, "Profile updated successfully"));
 });
 
 // Update user cover image and return JSON response using ApiResponse
@@ -363,7 +369,6 @@ export {
   logoutUser,
   getCurrentUser,
   updateAccountDetails,
-  updateUserAvatar,
   updateUserCoverImage,
   changeCurrentPassword,
   refreshAccessToken,

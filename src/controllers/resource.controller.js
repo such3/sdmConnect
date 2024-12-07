@@ -7,7 +7,7 @@ import mongoose from "mongoose";
 
 // Controller for creating a resource (URL only)
 const createResource = asyncHandler(async (req, res) => {
-  console.log("Controller hit");
+  // console.log("Controller hit");
 
   // Extract form fields from the request body
   const { title, description, branch, semester, file } = req.body;
@@ -22,13 +22,13 @@ const createResource = asyncHandler(async (req, res) => {
     return res.redirect("/pages/upload?error=All fields are required");
   }
 
-  console.log("Form data received:", {
-    title,
-    description,
-    branch,
-    semester,
-    file,
-  });
+  // console.log("Form data received:", {
+  //   title,
+  //   description,
+  //   branch,
+  //   semester,
+  //   file,
+  // });
 
   try {
     // Create the resource in the database
@@ -182,9 +182,9 @@ const getAllResources = asyncHandler(async (req, res) => {
 
 const getSingleResource = asyncHandler(async (req, res) => {
   const resourceSlug = req.params; // Extract the resourceSlug from the request parameters
-  console.log(resourceSlug);
+  // console.log(resourceSlug);
   // Log the slug to ensure it’s the expected value
-  console.log("Requested Resource Slug:", resourceSlug);
+  // console.log("Requested Resource Slug:", resourceSlug);
 
   // Step 2: Find the resource by slug
   const resource = await Resource.findOne(resourceSlug)

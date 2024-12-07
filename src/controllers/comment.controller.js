@@ -38,23 +38,22 @@ const addComment = asyncHandler(async (req, res, next) => {
 
 // 2. Edit a comment
 const editComment = asyncHandler(async (req, res, next) => {
-  const { resourceSlug, commentId } = req.params; // Get resourceSlug and commentId from request params
-  const { comment } = req.body; // Get the updated comment text from the body
+  const { resourceSlug, uniqueString } = req.params; // Destructure both resourceSlug and uniqueString
+  const { comment } = req.body; // Get the updated comment from the request body
 
-  // Step 1: Find the resource by slug
+  // Find the resource by its slug
   const resource = await Resource.findOne({ slug: resourceSlug });
   if (!resource) {
     throw new ApiError(404, "Resource not found");
   }
 
-  // Step 2: Find the comment by its ID, associated resource, and check if the user is the owner
+  // Find the comment by its uniqueString and ensure it belongs to the correct resource and user
   const existingComment = await Comment.findOne({
-    _id: commentId,
-    resource: resource._id, // Ensure the comment is associated with the resource
-    user: req.user._id, // Check if the user making the request is the owner of the comment
+    uniqueString, // Match by the uniqueString
+    resource: resource._id, // Match by the resource _id
+    user: req.user._id, // Ensure the user is the one who created the comment
   });
 
-  // Step 3: If the comment doesn't exist or the user isn't the owner, throw an error
   if (!existingComment) {
     throw new ApiError(
       404,
@@ -62,35 +61,33 @@ const editComment = asyncHandler(async (req, res, next) => {
     );
   }
 
-  // Step 4: If the comment exists and the user is the owner, update the comment text
+  // Update the comment text
   existingComment.comment = comment;
-
-  // Step 5: Save the updated comment to the database
   await existingComment.save();
 
-  // Step 6: Return success response with the updated comment
   return res.status(200).json({
     message: "Comment updated successfully",
-    comment: existingComment, // Send the updated comment object back to the user
+    comment: existingComment,
   });
 });
 
 // 3. Delete a comment
 const deleteComment = asyncHandler(async (req, res, next) => {
-  const { resourceSlug, commentId } = req.params; // Get resourceSlug and commentId from request params
+  const { resourceSlug, uniqueString } = req.params; // Get resourceSlug and uniqueString from params
 
-  // Step 1: Find the resource by slug
+  // Find the resource by its slug
   const resource = await Resource.findOne({ slug: resourceSlug });
   if (!resource) {
     throw new ApiError(404, "Resource not found");
   }
 
-  // Step 2: Check if the comment exists
+  // Find the comment by uniqueString and ensure it belongs to the correct resource and user
   const comment = await Comment.findOne({
-    _id: commentId,
-    resource: resource._id,
-    user: req.user._id,
+    uniqueString, // Match by the uniqueString
+    resource: resource._id, // Match by the resource _id
+    user: req.user._id, // Ensure the user is the one who created the comment
   });
+
   if (!comment) {
     throw new ApiError(
       404,
@@ -98,10 +95,9 @@ const deleteComment = asyncHandler(async (req, res, next) => {
     );
   }
 
-  // Step 3: Delete the comment
+  // Delete the comment
   await comment.deleteOne({ _id: comment._id });
 
-  // Return success response
   return res.status(200).json({
     message: "Comment deleted successfully",
   });

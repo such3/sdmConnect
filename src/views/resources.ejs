@@ -1,170 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resources - sdmConnect</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-  </head>
-  <body class="bg-gray-900 font-sans text-white flex flex-col min-h-screen">
-    <!-- Navbar -->
-    <nav class="bg-gray-800 p-4 shadow-md">
-      <div class="container mx-auto flex justify-between items-center">
-        <a href="/" class="text-white text-3xl font-semibold hover:text-blue-500">sdmConnect</a>
-        <ul class="flex space-x-6 text-lg">
-          <li><a href="/pages/upload" class="hover:text-blue-500">Upload</a></li>
-          <li><a href="/pages/profile" class="hover:text-blue-500">Profile</a></li>
-        </ul>
-      </div>
-    </nav>
 
-    <!-- Error Message (If any) -->
-    <% if (error) { %>
-      <div class="bg-red-500 text-white text-center p-4 mt-4 mx-auto max-w-4xl rounded-md">
-        <p><%= error %></p>
-      </div>
-    <% } %>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resources - sdmConnect</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
 
-   <!-- Filters Section -->
-<section class="bg-gray-800 p-6 mt-8 rounded-lg shadow-lg">
-  <div class="max-w-7xl mx-auto">
-    <!-- Filter Container: Use Grid for responsiveness -->
-    <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      
-      <!-- Semester Filter -->
-      <div class="flex flex-col space-y-2">
-        <label for="semester" class="text-white">Filter by Semester:</label>
-        <select id="semester" class="bg-gray-700 text-white p-2 rounded-md">
-          <option value="">All</option>
-          <% for (let i = 1; i <= 8; i++) { %>
-            <option value="<%= i %>" <%= semester === String(i) ? 'selected' : '' %>><%= i %></option>
-          <% } %>
-        </select>
-      </div>
+<body class="bg-gray-900 font-sans text-white flex flex-col min-h-screen">
 
-      <!-- Branch Filter -->
-      <div class="flex flex-col space-y-2">
-        <label for="branch" class="text-white">Filter by Branch:</label>
-        <select id="branch" class="bg-gray-700 text-white p-2 rounded-md">
-          <option value="">All</option>
-          <% const branches = ["ISE", "CSE", "ECE", "MECH", "CIVIL", "EEE", "AIML", "CHEMICAL"]; %>
-          <% branches.forEach(function(branchOption) { %>
-            <option value="<%= branchOption %>" <%= branch === branchOption ? 'selected' : '' %>><%= branchOption %></option>
-          <% }); %>
-        </select>
-      </div>
+  <!-- Navbar -->
+  <nav class="bg-gray-800 p-4 shadow-md">
+    <div class="container mx-auto flex justify-between items-center">
+      <a href="/" class="text-white text-3xl font-bold hover:text-blue-500 transition-all">sdmConnect</a>
+      <ul class="flex space-x-6 text-lg">
+        <li><a href="/pages/upload" class="hover:text-blue-500 transition-all">Upload</a></li>
+        <li><a href="/pages/profile" class="hover:text-blue-500 transition-all">Profile</a></li>
+      </ul>
+    </div>
+  </nav>
 
-      <!-- Search Input -->
-      <div class="flex flex-col space-y-2">
-        <label for="search" class="text-white">Search Resources:</label>
-        <div class="flex items-center space-x-4">
-          <input 
-            type="text" 
-            id="search" 
-            value="<%= searchQuery %>" 
-            placeholder="Search resources..." 
-            class="bg-gray-700 text-white p-2 rounded-md flex-1"
-          />
-          <button onclick="applySearch()" class="bg-blue-500 text-white py-2 px-4 rounded-md">
-            Seearch
-          </button>
+  <!-- Error Message (If any) -->
+  <% if (error) { %>
+    <div class="bg-red-500 text-white text-center p-4 mt-4 mx-auto max-w-4xl rounded-md shadow-lg">
+      <p><%= error %></p>
+    </div>
+  <% } %>
+
+  <!-- Filters Section -->
+  <section class="bg-gray-800 p-6 mt-8 rounded-lg shadow-xl">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        <!-- Semester Filter -->
+        <div class="flex flex-col space-y-2">
+          <label for="semester" class="text-white text-lg font-medium">Filter by Semester:</label>
+          <select id="semester" class="bg-gray-700 text-white p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">All</option>
+            <% for (let i = 1; i <= 8; i++) { %>
+              <option value="<%= i %>" <%= semester === String(i) ? 'selected' : '' %>><%= i %></option>
+            <% } %>
+          </select>
+        </div>
+
+        <!-- Branch Filter -->
+        <div class="flex flex-col space-y-2">
+          <label for="branch" class="text-white text-lg font-medium">Filter by Branch:</label>
+          <select id="branch" class="bg-gray-700 text-white p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">All</option>
+            <% const branches = ["ISE", "CSE", "ECE", "MECH", "CIVIL", "EEE", "AIML", "CHEMICAL"]; %>
+            <% branches.forEach(function(branchOption) { %>
+              <option value="<%= branchOption %>" <%= branch === branchOption ? 'selected' : '' %>><%= branchOption %></option>
+            <% }); %>
+          </select>
+        </div>
+
+        <!-- Search Input -->
+        <div class="flex flex-col space-y-2">
+          <label for="search" class="text-white text-lg font-medium">Search Resources:</label>
+          <div class="flex items-center space-x-4">
+            <input type="text" id="search" value="<%= searchQuery %>" placeholder="Search resources..." class="bg-gray-700 text-white p-3 rounded-md flex-1 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
         </div>
       </div>
-      
-    </div>
 
-    <!-- Button Container: Flex layout to align buttons -->
-    <div class="mt-6 flex flex-col sm:flex-row sm:space-x-4 justify-between items-center">
-      
-      <!-- Apply Filters Button -->
-      <div>
-        <button onclick="applyFilters()" class="bg-blue-500 text-white py-2 px-6 rounded-md w-full sm:w-auto">Apply Filters</button>
+      <!-- Button Container -->
+      <div class="mt-6 flex justify-between items-center">
+        <!-- Apply Filters Button -->
+        <button onclick="applySearchAndFilter()" class="bg-blue-500 text-white py-3 px-6 rounded-md w-full sm:w-auto hover:bg-blue-600 transition-all">Apply Search & Filters</button>
+        
+        <!-- Reset Filters Button -->
+        <a href="/pages/resources" class="bg-gray-600 text-white py-3 px-6 rounded-md w-full sm:w-auto text-center hover:bg-gray-700 transition-all mt-4 sm:mt-0">Reset Filters</a>
       </div>
-
-      <!-- Clear Filters Button -->
-      <div class="mt-4 sm:mt-0">
-        <a href="/pages/resources" class="bg-gray-600 text-white py-2 px-6 rounded-md w-full sm:w-auto text-center">Clear Filters</a>
-      </div>
-
     </div>
-  </div>
-</section>
+  </section>
 
-    <!-- Resources Section -->
-    <section class="max-w-7xl mx-auto p-8">
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <% if (resources.length === 0) { %>
-          <div class="col-span-3 text-center text-gray-400">
-            <p>No resources yet</p>
-          </div>
-        <% } else { %>
-          <% resources.forEach(resource => { %>
-            <div class="bg-gray-700 p-6 rounded-lg shadow-lg">
-              <!-- Owner Info -->
-              <div class="flex items-center mb-4">
-                <div class="w-12 h-12 rounded-full overflow-hidden mr-4">
-                  <img src="<%= resource.owner.avatar %>" alt="Owner Avatar" class="w-full h-full object-cover">
-                </div>
-                <div>
-                  <p class="font-semibold text-white"><%= resource.owner.fullName %></p>
-                  <p class="text-sm text-gray-400">@<%= resource.owner.username %></p>
-                </div>
+  <!-- Resources Section -->
+  <section class="max-w-7xl mx-auto p-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% if (resources.length === 0) { %>
+        <div class="col-span-3 text-center text-gray-400">
+          <p>No resources yet</p>
+        </div>
+      <% } else { %>
+        <% resources.forEach(resource => { %>
+          <div class="bg-gray-800 p-6 rounded-lg shadow-xl hover:shadow-2xl transition-all transform hover:scale-105">
+            <!-- Owner Info -->
+            <div class="flex items-center mb-4">
+              <div class="w-12 h-12 rounded-full overflow-hidden mr-4">
+                <img src="<%= resource.owner.avatar %>" alt="Owner Avatar" class="w-full h-full object-cover">
               </div>
-              <!-- Resource Details -->
-              <h3 class="text-xl font-semibold text-blue-400"><%= resource.title %></h3>
-              <p class="text-sm text-gray-300 mt-2"><%= resource.description %></p>
-              <div class="mt-4">
-                <p class="text-sm text-gray-400">Semester: <%= resource.semester %></p>
-                <p class="text-sm text-gray-400">Branch: <%= resource.branch %></p>
-              </div>
-              <!-- Actions -->
-              <div class="mt-6 flex space-x-4">
-                <a href="<%= resource.file %>" class="bg-blue-500 text-white py-2 px-6 rounded-full text-center hover:bg-blue-600 transition-all">Download</a>
-                <a href="/pages/resource/<%= resource.slug %>" target="_blank" class="bg-gray-700 text-white py-2 px-6 rounded-full text-center hover:bg-gray-800 transition-all">View Details</a>
+              <div>
+                <p class="font-semibold text-white"><%= resource.owner.fullName %></p>
+                <p class="text-sm text-gray-400">@<%= resource.owner.username %></p>
               </div>
             </div>
-          <% }); %>
-        <% } %>
+            <!-- Resource Details -->
+            <h3 class="text-xl font-semibold text-blue-400 hover:text-blue-500 transition-all"><%= resource.title %></h3>
+            <p class="text-sm text-gray-300 mt-2"><%= resource.description %></p>
+            <div class="mt-4">
+              <p class="text-sm text-gray-400">Semester: <%= resource.semester %></p>
+              <p class="text-sm text-gray-400">Branch: <%= resource.branch %></p>
+            </div>
+            <!-- Actions -->
+            <div class="mt-6 flex space-x-4">
+              <a href="<%= resource.file %>" class="bg-blue-500 text-white py-2 px-6 rounded-full text-center hover:bg-blue-600 transition-all">Download</a>
+              <a href="/pages/resource/<%= resource.slug %>" target="_blank" class="bg-gray-700 text-white py-2 px-6 rounded-full text-center hover:bg-gray-800 transition-all">View Details</a>
+            </div>
+          </div>
+        <% }); %>
+      <% } %>
+    </div>
+
+    <!-- Pagination -->
+    <div class="flex justify-center mt-8 space-x-4">
+      <% if (currentPage > 1) { %>
+        <a href="/pages/resources?page=<%= currentPage - 1 %>&semester=<%= semester %>&branch=<%= branch %>&search=<%= searchQuery %>" class="bg-blue-500 text-white py-3 px-6 rounded-md hover:bg-blue-600 transition-all">Previous</a>
+      <% } %>
+
+      <div class="text-white flex items-center">
+        Page <%= currentPage %> of <%= totalPages %>
       </div>
 
-      <!-- Pagination -->
-      <div class="flex justify-center mt-8 space-x-4">
-        <!-- Previous Page -->
-        <% if (currentPage > 1) { %>
-          <a href="/pages/resources?page=<%= currentPage - 1 %>&semester=<%= semester %>&branch=<%= branch %>&search=<%= searchQuery %>" class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Previous</a>
-        <% } %>
+      <% if (currentPage < totalPages) { %>
+        <a href="/pages/resources?page=<%= currentPage + 1 %>&semester=<%= semester %>&branch=<%= branch %>&search=<%= searchQuery %>" class="bg-blue-500 text-white py-3 px-6 rounded-md hover:bg-blue-600 transition-all">Next</a>
+      <% } %>
+    </div>
+  </section>
 
-        <!-- Page Numbers -->
-        <div class="text-white flex items-center">
-          Page <%= currentPage %> of <%= totalPages %>
-        </div>
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-center text-gray-400 py-6 mt-auto">
+    <p>&copy; 2024 sdmConnect | All Rights Reserved</p>
+  </footer>
 
-        <!-- Next Page -->
-        <% if (currentPage < totalPages) { %>
-          <a href="/pages/resources?page=<%= currentPage + 1 %>&semester=<%= semester %>&branch=<%= branch %>&search=<%= searchQuery %>" class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Next</a>
-        <% } %>
-      </div>
-    </section>
+  <script>
+    // Apply Filters and Search
+    function applySearchAndFilter() {
+      const semester = document.getElementById("semester").value;
+      const branch = document.getElementById("branch").value;
+      const searchQuery = document.getElementById("search").value;
+      window.location.href = `/pages/resources?page=1&semester=${semester}&branch=${branch}&searchQuery=${searchQuery}`;
+    }
+  </script>
+</body>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-center text-gray-400 py-6 mt-auto">
-      <p>&copy; 2024 sdmConnect | All Rights Reserved</p>
-    </footer>
-
-    <script>
-      // Apply Filters
-      function applyFilters() {
-        const semester = document.getElementById("semester").value;
-        const branch = document.getElementById("branch").value;
-        const searchQuery = document.getElementById("search").value;
-        window.location.href = `/pages/resources?page=1&semester=${semester}&branch=${branch}&searchQuery=${searchQuery}`;
-      }
-
-      // Apply Search
-      function applySearch() {
-        const searchQuery = document.getElementById("search").value;
-        window.location.href = `/pages/resources?page=1&searchQuery=${searchQuery}`;
-      }
-    </script>
-  </body>
 </html>
