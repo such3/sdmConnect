@@ -162,7 +162,7 @@ router.get("/resources", async (req, res) => {
   const { semester, branch, page = 1, searchQuery = "" } = req.query; // Get filter parameters and search term from query string
   // console.log("Search Query:", searchQuery); // Debugging the search query
   // Construct the API URL with optional filters and search query
-  let apiUrl = `http://localhost:3000/api/v1/resources?page=${page}`;
+  let apiUrl = `http://localhost:3000/api/v1/users/resources?page=${page}`;
 
   // Add filters if they are provided
   if (semester) apiUrl += `&semester=${semester}`;
