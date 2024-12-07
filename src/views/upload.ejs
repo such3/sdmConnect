@@ -185,7 +185,6 @@
           };
 
           try {
-            // Send the POST request using fetch
             const response = await fetch("/api/v1/users/resource", {
               method: "POST",
               headers: {
@@ -194,32 +193,24 @@
               body: JSON.stringify(formData),
             });
             console.log(response);
-
-            // Check if the response is successful
+            // Ensure response is JSON
             if (response.ok) {
-              // Try parsing the JSON response
-              const responseData = await response.json(); // Directly parse as JSON
-              console.log(responseData); // Check the response in the console
+              const responseData = await response.json(); // Try parsing as JSON
+              console.log(responseData);
               notyf.success("Resource uploaded successfully!");
 
               // Reset the form
-              document.getElementById("uploadForm").reset(); // Reset the form
-
-              // Assuming the response contains a resource ID or slug, redirect after 2 seconds
-              const resourceSlug = responseData.data.slug; // Adjust according to your response format
+              document.getElementById("uploadForm").reset();
+              const resourceSlug = responseData.data.slug;
               setTimeout(() => {
-                window.location.href = `/pages/resource/${resourceSlug}`; // Redirect to the resource's individual page
-              }, 2000); // 2-second delay before redirect
+                window.location.href = `/pages/resource/${resourceSlug}`;
+              }, 2000);
             } else {
-              // Handle error responses
-              const errorData = await response.json();
-              console.log("Error data:", errorData);
-              notyf.error(
-                `Error: ${errorData.message || "An unexpected error occurred."}`
-              );
+              const errorData = await response.text(); // Try parsing as text
+              console.error("Error:", errorData); // Log the error
+              notyf.error(`Error: ${errorData}`);
             }
           } catch (error) {
-            // Handle network or unexpected errors
             console.error("Request failed:", error);
             notyf.error("Something went wrong. Please try again.");
           }

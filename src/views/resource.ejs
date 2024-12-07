@@ -16,7 +16,7 @@
       <a href="/" class="text-white text-3xl font-bold hover:text-blue-500">sdmConnect</a>
       <ul class="flex space-x-6 text-lg">
         <li><a href="/pages/upload" class="hover:text-blue-500">Upload</a></li>
-        <li><a href="/pages/find" class="hover:text-blue-500">Find</a></li>
+        <li><a href="/pages/resources" class="hover:text-blue-500">Find</a></li>
         <li><a href="/pages/profile" class="hover:text-blue-500">Profile</a></li>
       </ul>
     </div>
@@ -96,12 +96,13 @@
       <!-- Comment Form -->
       <form id="commentForm" action="javascript:void(0)" method="POST" class="space-y-4 mt-6">
         <textarea 
-          name="comment" 
-          rows="4" 
-          placeholder="Write your comment here..." 
-          class="w-full bg-gray-800 text-white rounded-lg p-4 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" 
-          required>
-        </textarea>
+  name="comment" 
+  rows="4" 
+  placeholder="Write your comment here..." 
+  class="w-full bg-gray-800 text-white rounded-lg p-4 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none placeholder-gray-400" 
+  required>
+</textarea>
+
         <button 
           type="submit" 
           class="bg-blue-500 text-white px-6 py-3 rounded-full text-lg hover:bg-blue-600 transition w-full md:w-auto">
@@ -138,8 +139,8 @@
   
     // Initialize Notyf for notifications
     const notyf = new Notyf({
-      duration: 3000, // Duration of the notification
-      position: { x: 'right', y: 'top' },  // Position of the notification
+      duration: 3000,
+      position: { x: 'right', y: 'top' },
     });
   
     // Open Edit Modal with existing comment content
@@ -161,24 +162,21 @@
       document.getElementById('deleteConfirmationModal').classList.add('hidden');
     }
   
-    // Save or edit a comment
-    function saveComment() {
-      const updatedCommentText = document.getElementById('editCommentText').value;
+    // POST - Add a new comment
+    function postComment() {
+      const newCommentText = document.querySelector('textarea[name="comment"]').value;
   
-      // If we're editing, send a PUT request with the uniqueString
-      fetch(`/api/v1/users/<%= resource.slug %>/comments/${editCommentUniqueString}`, {
-        method: 'PUT',  // Always PUT for edit operations
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ comment: updatedCommentText }),
+      fetch(`/api/v1/users/<%= resource.slug %>/comments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ comment: newCommentText }),
       }).then(response => {
         if (response.ok) {
           // Show success notification
-          notyf.success('Comment successfully saved!');
+          notyf.success('Comment successfully posted!');
           
           // Reload comments after success
-          window.location.reload();  // Alternatively, you can reload just the comments section
+          window.location.reload();
         } else {
           alert('Failed to post the comment.');
         }
@@ -187,7 +185,30 @@
       });
     }
   
-    // Delete comment
+    // PUT - Edit an existing comment
+    function putComment() {
+      const updatedCommentText = document.getElementById('editCommentText').value;
+  
+      fetch(`/api/v1/users/<%= resource.slug %>/comments/${editCommentUniqueString}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ comment: updatedCommentText }),
+      }).then(response => {
+        if (response.ok) {
+          // Show success notification
+          notyf.success('Comment successfully edited!');
+          
+          // Reload comments after success
+          window.location.reload();
+        } else {
+          alert('Failed to update the comment.');
+        }
+      }).catch(err => {
+        console.error('Error:', err);
+      });
+    }
+  
+    // DELETE - Delete an existing comment
     function deleteComment() {
       fetch(`/api/v1/users/<%= resource.slug %>/comments/${deleteCommentUniqueString}`, {
         method: 'DELETE',
@@ -197,7 +218,7 @@
           notyf.success('Comment deleted successfully!');
           
           // Reload comments after deletion
-          window.location.reload();  // Alternatively, you can manually reload only the comments section
+          window.location.reload();
         } else {
           alert('Failed to delete the comment.');
         }
@@ -210,9 +231,21 @@
     document.getElementById('commentForm').addEventListener('submit', function(event) {
       event.preventDefault();  // Prevent traditional form submission
       
-      // Call saveComment function to add the new comment
-      saveComment();
+      // Call postComment function to add a new comment
+      postComment();
     });
+  
+    // Attach PUT and DELETE functions to buttons
+    function saveComment() {
+      // If editing, call PUT, else call POST
+      if (editCommentUniqueString) {
+        putComment();  // Edit the comment
+      } else {
+        postComment();  // Create a new comment
+      }
+    }
+  
   </script>
+  
 </body>
 </html>

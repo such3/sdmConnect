@@ -108,7 +108,6 @@
   </div>
   <link rel="stylesheet" href="/scripts/notyf.min.js">
 </body>
-
 <script>
   const notyf = new Notyf();
 
@@ -139,6 +138,12 @@
     });
   }
 
+  // Validate the fullName field (only alphabets and spaces)
+  function validateFullName(fullName) {
+    const regex = /^[A-Za-z\s]+$/; // Only letters and spaces
+    return regex.test(fullName);
+  }
+
   // Handle form submission
   document.getElementById('editProfileForm').addEventListener('submit', async function (event) {
     event.preventDefault();
@@ -146,7 +151,13 @@
     const fullName = document.getElementById('fullName').value;
     const bio = document.getElementById('bio').value;
     const photoFile = profilePhotoInput.files[0];
-    
+
+    // Validate fullName before submitting
+    if (!validateFullName(fullName)) {
+      notyf.error("Full Name must only contain letters and spaces.");
+      return; // Prevent form submission if validation fails
+    }
+
     const formData = new FormData();
     formData.append('fullName', fullName);
     formData.append('bio', bio);
@@ -208,4 +219,5 @@
     }
   });
 </script>
+
 </html>

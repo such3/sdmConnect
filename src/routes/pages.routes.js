@@ -8,6 +8,7 @@ import {
   updateResource,
   deleteResource,
 } from "../controllers/resource.controller.js";
+import { verify } from "crypto";
 
 const router = new Router();
 
@@ -75,7 +76,7 @@ router.get("/profile", verifyJWT, async (req, res) => {
       message: req.query.message || "",
       error: req.query.error || "",
     });
-    // console.log("User : ", user);
+    console.log("User : ", user);
   } catch (err) {
     console.error("Error fetching user data:", err);
     return res.redirect("/pages/login?error=Error fetching user data");
@@ -158,7 +159,7 @@ router.get("/login-error", (req, res) => {
 });
 
 // Route to fetch and render the resources page with filters
-router.get("/resources", async (req, res) => {
+router.get("/resources", verifyJWT, async (req, res) => {
   const { semester, branch, page = 1, searchQuery = "" } = req.query; // Get filter parameters and search term from query string
   // console.log("Search Query:", searchQuery); // Debugging the search query
   // Construct the API URL with optional filters and search query
