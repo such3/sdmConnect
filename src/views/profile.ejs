@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="/styles/dist-1.css" />
   <link rel="stylesheet" href="/styles/notyf.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/notyf/3.10.0/notyf.min.js" integrity="sha512-467grL09I/ffq86LVdwDzi86uaxuAhFZyjC99D6CC1vghMp1YAs+DqCgRvhEtZIKX+o9lR0F2bro6qniyeCMEQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/notyf/3.10.0/notyf.min.js" integrity="sha512-467grL09I/ffq86LVdwDzi86uaxuAhFZyjC99D6CC1vghMp1YAs+DqCgRvhEtZIKX+o9lR0F2bro6qniyeCMEQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <style>
     .spinner-border {
       border-width: 0.3em;
@@ -28,6 +28,11 @@
       align-items: center;
       display: none;
     }
+
+    /* Ensures the container fills available space */
+    .content-wrapper {
+      min-height: 100vh; /* This ensures the page fills the entire viewport */
+    }
   </style>
 </head>
 
@@ -44,7 +49,7 @@
     </div>
   </nav>
 
-  <div class="max-w-7xl mx-auto mt-8 p-4">
+  <div class="content-wrapper max-w-7xl mx-auto mt-8 p-4">
     <div class="bg-gray-800 rounded-lg shadow-md p-6">
       <div class="flex items-center space-x-6">
         <div class="w-32 h-32 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full overflow-hidden border-4 border-gray-700">
@@ -75,7 +80,10 @@
           <% }); %>
         </div>
       <% } else { %>
-        <p class="text-gray-400">No resources uploaded yet.</p>
+        <!-- Adjust this part to avoid unnecessary empty space -->
+        <div class="flex justify-center items-center h-48 bg-gray-800 rounded-lg shadow-md border border-gray-700">
+          <p class="text-gray-400 text-center">No resources uploaded yet.</p>
+        </div>
       <% } %>
     </div>
   </div>
@@ -108,6 +116,7 @@
   </div>
   <link rel="stylesheet" href="/scripts/notyf.min.js">
 </body>
+
 <script>
   const notyf = new Notyf();
 
@@ -121,10 +130,10 @@
     document.getElementById("editProfileModal")?.classList.add("hidden");
   });
 
+  // Profile photo input preview
   const profilePhotoInput = document.getElementById('profilePhoto');
   const currentProfilePhoto = document.getElementById('currentProfilePhoto');
   
-  // Profile photo input preview
   if (profilePhotoInput) {
     profilePhotoInput.addEventListener('change', function (event) {
       const file = event.target.files[0];

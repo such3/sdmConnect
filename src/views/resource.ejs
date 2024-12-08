@@ -76,41 +76,46 @@
     <!-- Comments Section -->
     <section id="comments-section" class="bg-gray-900 rounded-lg p-6 shadow-lg space-y-6">
       <h3 class="text-2xl font-bold text-blue-400">Comments</h3>
+<!-- Check for Comments -->
+<% if (comments.length === 0) { %>
+  <p class="text-gray-400 text-center">No comments yet. Be the first to share your thoughts!</p>
+<% } else { %>
+  <% comments.forEach(comment => { %>
+    <div id="comment-<%= comment.uniqueString %>" class="bg-gray-800 p-4 rounded-lg border border-gray-700 hover:shadow-md">
+      <div class="flex items-center space-x-4">
+        <img src="<%= comment.user.avatar %>" alt="<%= comment.user.username %>" class="w-12 h-12 rounded-full border-2 border-gray-600">
+        <div>
+          <% if (comment.user.username === user.username) { %>
+            <p class="text-lg font-semibold">You</p>
+          <% } else { %>
+            <p class="text-lg font-semibold"><%= comment.user.fullName %></p>
+            <p class="text-sm text-gray-400">@<%= comment.user.username %></p>
+          <% } %>
+        </div>
+      </div>
+      <p class="text-gray-300 mt-4"><%= comment.comment %></p>
 
-      <!-- Check for Comments -->
-      <% if (comments.length === 0) { %>
-        <p class="text-gray-400 text-center">No comments yet. Be the first to share your thoughts!</p>
-      <% } else { %>
-        <% comments.forEach(comment => { %>
-          <div id="comment-<%= comment.uniqueString %>" class="bg-gray-800 p-4 rounded-lg border border-gray-700 hover:shadow-md">
-            <div class="flex items-center space-x-4">
-              <img src="<%= comment.user.avatar %>" alt="<%= comment.user.username %>" class="w-12 h-12 rounded-full border-2 border-gray-600">
-              <div>
-                <p class="text-lg font-semibold"><%= comment.user.fullName %></p>
-                <p class="text-sm text-gray-400">@<%= comment.user.username %></p>
-              </div>
-            </div>
-            <p class="text-gray-300 mt-4"><%= comment.comment %></p>
-
-            <% if (comment.user._id.toString() === user._id.toString()) { %>
-              <div class="flex justify-end space-x-3 mt-4">
-                <button class="px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-500" onclick="openEditModal('<%= resource.slug %>', '<%= comment.uniqueString %>', '<%= comment.comment %>')">Edit</button>
-                <button class="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-500" onclick="openDeleteConfirmation('<%= resource.slug %>', '<%= comment.uniqueString %>')">Delete</button>
-              </div>
-            <% } %>
-          </div>
-        <% }) %>
+      <% if (comment.user._id.toString() === user._id.toString()) { %>
+        <div class="flex justify-end space-x-3 mt-4">
+          <button class="px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-500" onclick="openEditModal('<%= resource.slug %>', '<%= comment.uniqueString %>', '<%= comment.comment %>')">Edit</button>
+          <button class="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-500" onclick="openDeleteConfirmation('<%= resource.slug %>', '<%= comment.uniqueString %>')">Delete</button>
+        </div>
       <% } %>
+    </div>
+  <% }) %>
+<% } %>
+
 
       <!-- Comment Form -->
       <form id="commentForm" action="javascript:void(0)" method="POST" class="space-y-4 mt-6">
         <textarea 
-          name="comment" 
-          rows="4" 
-          placeholder="Write your comment here..." 
-          class="w-full bg-gray-800 text-white rounded-lg p-4 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none placeholder-gray-400" 
-          required>
-        </textarea>
+  name="comment" 
+  rows="4" 
+  placeholder="Write your comment here..." 
+  class="w-full bg-gray-800 text-white rounded-lg p-2 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none placeholder-gray-400" 
+  required>
+</textarea>
+
         <button 
           type="submit" 
           class="bg-blue-500 text-white px-6 py-3 rounded-full text-lg hover:bg-blue-600 transition w-full md:w-auto">
