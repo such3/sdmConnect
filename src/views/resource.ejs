@@ -62,18 +62,27 @@
           </a>
         </div>
       </div>
+
+       <!-- Resource Edit and Delete buttons -->
+        <% if (resource.owner.username === user.username) { %>
+          <div class="flex justify-end space-x-4 mt-4">
+            <button class="px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-500" onclick="openEditResourceModal('<%= resource.slug %>', '<%= resource.title %>', '<%= resource.description %>')">Edit Resource</button>
+            <button class="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-500" onclick="openDeleteResourceConfirmation('<%= resource.slug %>')">Delete Resource</button>
+          </div>
+        <% } %>
+       
     </section>
 
     <!-- Comments Section -->
     <section id="comments-section" class="bg-gray-900 rounded-lg p-6 shadow-lg space-y-6">
       <h3 class="text-2xl font-bold text-blue-400">Comments</h3>
-      
+
       <!-- Check for Comments -->
       <% if (comments.length === 0) { %>
         <p class="text-gray-400 text-center">No comments yet. Be the first to share your thoughts!</p>
       <% } else { %>
         <% comments.forEach(comment => { %>
-          <div id="comment-<%= comment._id %>" class="bg-gray-800 p-4 rounded-lg border border-gray-700 hover:shadow-md">
+          <div id="comment-<%= comment.uniqueString %>" class="bg-gray-800 p-4 rounded-lg border border-gray-700 hover:shadow-md">
             <div class="flex items-center space-x-4">
               <img src="<%= comment.user.avatar %>" alt="<%= comment.user.username %>" class="w-12 h-12 rounded-full border-2 border-gray-600">
               <div>
@@ -82,11 +91,11 @@
               </div>
             </div>
             <p class="text-gray-300 mt-4"><%= comment.comment %></p>
-        
+
             <% if (comment.user._id.toString() === user._id.toString()) { %>
               <div class="flex justify-end space-x-3 mt-4">
-                <button class="px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-500" onclick="openEditModal('<%= comment.uniqueString %>', '<%= comment.comment %>')">Edit</button>
-                <button class="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-500" onclick="openDeleteConfirmation('<%= comment.uniqueString %>')">Delete</button>
+                <button class="px-4 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-500" onclick="openEditModal('<%= resource.slug %>', '<%= comment.uniqueString %>', '<%= comment.comment %>')">Edit</button>
+                <button class="px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-500" onclick="openDeleteConfirmation('<%= resource.slug %>', '<%= comment.uniqueString %>')">Delete</button>
               </div>
             <% } %>
           </div>
@@ -96,13 +105,12 @@
       <!-- Comment Form -->
       <form id="commentForm" action="javascript:void(0)" method="POST" class="space-y-4 mt-6">
         <textarea 
-  name="comment" 
-  rows="4" 
-  placeholder="Write your comment here..." 
-  class="w-full bg-gray-800 text-white rounded-lg p-4 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none placeholder-gray-400" 
-  required>
-</textarea>
-
+          name="comment" 
+          rows="4" 
+          placeholder="Write your comment here..." 
+          class="w-full bg-gray-800 text-white rounded-lg p-4 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none placeholder-gray-400" 
+          required>
+        </textarea>
         <button 
           type="submit" 
           class="bg-blue-500 text-white px-6 py-3 rounded-full text-lg hover:bg-blue-600 transition w-full md:w-auto">
@@ -119,7 +127,7 @@
       <textarea id="editCommentText" class="w-full p-4 bg-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500"></textarea>
       <div class="mt-4 flex space-x-4">
         <button class="w-full px-4 py-2 bg-gray-500 text-white rounded-lg" onclick="closeModal()">Cancel</button>
-        <button class="w-full px-4 py-2 bg-blue-500 text-white rounded-lg" onclick="saveComment()">Save</button>
+        <button class="w-full px-4 py-2 bg-blue-500 text-white rounded-lg" onclick="putComment()">Save</button>
       </div>
     </div>
   </div>
@@ -133,119 +141,190 @@
       </div>
     </div>
   </div>
+
+  <!-- Resource Modals -->
+  <div id="editResourceModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-gray-700 p-6 rounded-lg shadow-lg max-w-md w-full">
+      <h3 class="text-2xl font-semibold mb-4">Edit Resource</h3>
+      <form id="editResourceForm">
+        <input type="text" id="editResourceTitle" class="w-full p-4 bg-gray-600 rounded-lg text-white mb-4" required>
+        <textarea id="editResourceDescription" class="w-full p-4 bg-gray-600 rounded-lg text-white mb-4" required></textarea>
+        <div class="flex space-x-4">
+          <button type="button" class="w-full px-4 py-2 bg-gray-500 text-white rounded-lg" onclick="closeModal()">Cancel</button>
+          <button type="submit" class="w-full px-4 py-2 bg-blue-500 text-white rounded-lg">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="deleteResourceConfirmationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-gray-700 p-6 rounded-lg shadow-lg max-w-md w-full">
+      <h3 class="text-2xl font-semibold mb-4">Confirm Deletion</h3>
+      <div class="flex space-x-4">
+        <button class="w-full px-4 py-2 bg-gray-500 text-white rounded-lg" onclick="closeModal()">Cancel</button>
+        <button class="w-full px-4 py-2 bg-red-500 text-white rounded-lg" onclick="deleteResource()">Delete</button>
+      </div>
+    </div>
+  </div>
+
   <script>
+    // Declare global variables
     let editCommentUniqueString = null;
     let deleteCommentUniqueString = null;
-  
+    let editResourceSlug = null;
+    let deleteResourceSlug = null;
+
     // Initialize Notyf for notifications
     const notyf = new Notyf({
       duration: 3000,
       position: { x: 'right', y: 'top' },
     });
-  
+
     // Open Edit Modal with existing comment content
-    function openEditModal(uniqueString, commentText) {
+    function openEditModal(slug, uniqueString, commentText) {
       document.getElementById('editCommentModal').classList.remove('hidden');
       document.getElementById('editCommentText').value = commentText;
-      editCommentUniqueString = uniqueString;  // Store the uniqueString for the comment being edited
+      editCommentUniqueString = uniqueString;  
     }
-  
-    // Open Delete Confirmation Modal
-    function openDeleteConfirmation(uniqueString) {
+
+    // Open Delete Confirmation Modal for comments
+    function openDeleteConfirmation(slug, uniqueString) {
       document.getElementById('deleteConfirmationModal').classList.remove('hidden');
-      deleteCommentUniqueString = uniqueString;  // Store the uniqueString for the comment being deleted
+      deleteCommentUniqueString = uniqueString;
     }
-  
+
     // Close any modal
     function closeModal() {
       document.getElementById('editCommentModal').classList.add('hidden');
       document.getElementById('deleteConfirmationModal').classList.add('hidden');
+      document.getElementById('editResourceModal').classList.add('hidden');
+      document.getElementById('deleteResourceConfirmationModal').classList.add('hidden');
     }
-  
+
     // POST - Add a new comment
     function postComment() {
       const newCommentText = document.querySelector('textarea[name="comment"]').value;
-  
+
       fetch(`/api/v1/users/<%= resource.slug %>/comments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ comment: newCommentText }),
-      }).then(response => {
+      })
+      .then(response => {
         if (response.ok) {
-          // Show success notification
           notyf.success('Comment successfully posted!');
-          
-          // Reload comments after success
           window.location.reload();
         } else {
           alert('Failed to post the comment.');
         }
-      }).catch(err => {
+      })
+      .catch(err => {
         console.error('Error:', err);
       });
     }
-  
+
     // PUT - Edit an existing comment
     function putComment() {
       const updatedCommentText = document.getElementById('editCommentText').value;
-  
+
       fetch(`/api/v1/users/<%= resource.slug %>/comments/${editCommentUniqueString}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ comment: updatedCommentText }),
-      }).then(response => {
+      })
+      .then(response => {
         if (response.ok) {
-          // Show success notification
           notyf.success('Comment successfully edited!');
-          
-          // Reload comments after success
           window.location.reload();
         } else {
           alert('Failed to update the comment.');
         }
-      }).catch(err => {
+      })
+      .catch(err => {
         console.error('Error:', err);
       });
     }
-  
+
     // DELETE - Delete an existing comment
     function deleteComment() {
       fetch(`/api/v1/users/<%= resource.slug %>/comments/${deleteCommentUniqueString}`, {
         method: 'DELETE',
-      }).then(response => {
+      })
+      .then(response => {
         if (response.ok) {
-          // Show success notification
           notyf.success('Comment deleted successfully!');
-          
-          // Reload comments after deletion
           window.location.reload();
         } else {
           alert('Failed to delete the comment.');
         }
-      }).catch(err => {
+      })
+      .catch(err => {
         console.error('Error:', err);
       });
     }
-  
+
     // Form submission for new comments
     document.getElementById('commentForm').addEventListener('submit', function(event) {
-      event.preventDefault();  // Prevent traditional form submission
-      
-      // Call postComment function to add a new comment
+      event.preventDefault();
       postComment();
     });
-  
-    // Attach PUT and DELETE functions to buttons
-    function saveComment() {
-      // If editing, call PUT, else call POST
-      if (editCommentUniqueString) {
-        putComment();  // Edit the comment
-      } else {
-        postComment();  // Create a new comment
-      }
+
+    // Open Edit Resource Modal
+    function openEditResourceModal(slug, title, description) {
+      console.log("Slug : ",slug);
+      document.getElementById('editResourceModal').classList.remove('hidden');
+      document.getElementById('editResourceTitle').value = title;
+      document.getElementById('editResourceDescription').value = description;
+      editResourceSlug =  slug;  
     }
-  
+    console.log(editResourceSlug);
+    // Open Delete Resource Confirmation Modal
+    function openDeleteResourceConfirmation(slug) {
+      document.getElementById('deleteResourceConfirmationModal').classList.remove('hidden');
+      deleteResourceSlug = slug; 
+    }
+
+    // Edit Resource - Send updated data to server
+    document.getElementById('editResourceForm').addEventListener('submit', function(event) {
+      event.preventDefault();  
+      const updatedTitle = document.getElementById('editResourceTitle').value;
+      const updatedDescription = document.getElementById('editResourceDescription').value;
+
+      fetch(`/api/v1/users/resource/${editResourceSlug}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: updatedTitle, description: updatedDescription }),
+      })
+      .then(response => {
+        if (response.ok) {
+          notyf.success('Resource successfully updated!');
+          window.location.reload();
+        } else {
+          notyf.error('Failed to update the resource.');
+        }
+      })
+      .catch(err => {
+        console.error('Error:', err);
+      });
+    });
+
+    // DELETE Resource - Send delete request
+    function deleteResource() {
+      fetch(`/api/v1/users/resource/${deleteResourceSlug}`, {
+        method: 'DELETE',
+      })
+      .then(response => {
+        if (response.ok) {
+          notyf.success('Resource deleted successfully!');
+          window.location.href = '/pages/resources';
+        } else {
+          notyf.error('Failed to delete the resource.');
+        }
+      })
+      .catch(err => {
+        console.error('Error:', err);
+      });
+    }
   </script>
-  
 </body>
 </html>

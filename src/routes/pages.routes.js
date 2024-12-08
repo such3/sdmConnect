@@ -99,7 +99,7 @@ router.get("/resource/:slug", verifyJWT, async (req, res) => {
       }
     );
     // console.log("API Response Status for Resource:", response.status); // Log the response status
-    // console.log("Response : ", response);
+    // console.log("Response into page : ", response);
     if (!response.ok) {
       return res.status(404).render("error", {
         message: "Resource not found",
@@ -109,7 +109,7 @@ router.get("/resource/:slug", verifyJWT, async (req, res) => {
 
     // Parse the JSON response from the resource API
     const resourceData = await response.json();
-    // console.log("Fetched Resource Data:", resourceData); // Log the fetched resource data
+    console.log("Fetched Resource Data:", resourceData); // Log the fetched resource data
 
     if (!resourceData?.data) {
       throw new Error("Invalid response structure for resource");
@@ -125,11 +125,11 @@ router.get("/resource/:slug", verifyJWT, async (req, res) => {
         },
       }
     );
-    console.log("API Response Status for Comments:", commentsResponse.status); // Log the response status
+    // console.log("API Response Status for Comments:", commentsResponse.status); // Log the response status
 
     // Parse the JSON response from the comments API
     const commentsData = await commentsResponse.json();
-    console.log("Fetched Comments Data:", commentsData); // Log the fetched comments data
+    // console.log("Fetched Comments Data:", commentsData); // Log the fetched comments data
 
     // Check if comments exist, if not pass an empty array
     const comments = commentsData.comments || [];

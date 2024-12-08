@@ -5,14 +5,9 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.model.js";
 import mongoose from "mongoose";
 
-// Controller for creating a resource (URL only)
 const createResource = asyncHandler(async (req, res) => {
-  // console.log("Controller hit");
-
-  // Extract form fields from the request body
   const { title, description, branch, semester, file } = req.body;
 
-  // Validate required fields (checking for empty or undefined values)
   if (
     [title, description, branch, semester, file].some(
       (field) => !field || field.trim() === ""
@@ -22,46 +17,34 @@ const createResource = asyncHandler(async (req, res) => {
     return res.redirect("/pages/upload?error=All fields are required");
   }
 
-  // console.log("Form data received:", {
-  //   title,
-  //   description,
-  //   branch,
-  //   semester,
-  //   file,
-  // });
-
   try {
-    // Create the resource in the database
     const resource = await Resource.create({
       title,
       description,
       semester,
       branch,
-      file, // Store the URL submitted by the user
+      file,
       owner: req.user._id, // Set the owner to the current user's ID
     });
-
-    // console.log("Resource created:", resource);
 
     if (!resource) {
       console.error("Failed to create resource");
       return res.redirect("/pages/upload?error=Failed to create resource");
     }
 
-    // Update the user's resource list
+    // Add the created resource's ObjectId to the user's resources array
     const user = await User.findById(req.user._id);
     if (!user) {
       console.error("User not found");
       return res.status(404).json(new ApiResponse(404, null, "User not found"));
     }
 
-    user.resources.push(resource._id);
+    user.resources.push(resource._id); // Use resource._id (not the slug)
     await user.save();
+
     res
       .status(201)
-      .json(
-        new ApiResponse(201, { slug: resource.slug }, "resource Uploaded ")
-      );
+      .json(new ApiResponse(201, { slug: resource.slug }, "Resource uploaded"));
   } catch (error) {
     console.error("Error during resource creation:", error);
     return res.redirect(
@@ -69,6 +52,7 @@ const createResource = asyncHandler(async (req, res) => {
     );
   }
 });
+
 const getAllResources = asyncHandler(async (req, res) => {
   // Step 1: Extract query parameters
   const { searchQuery, semester, branch, page = 1, limit = 10 } = req.query;
@@ -181,51 +165,58 @@ const getAllResources = asyncHandler(async (req, res) => {
 });
 
 const getSingleResource = asyncHandler(async (req, res) => {
-  const resourceSlug = req.params; // Extract the resourceSlug from the request parameters
-  // console.log(resourceSlug);
-  // Log the slug to ensure it’s the expected value
-  // console.log("Requested Resource Slug:", resourceSlug);
-
-  // Step 2: Find the resource by slug
-  const resource = await Resource.findOne(resourceSlug)
-    .populate("owner", "fullName username avatar") // Populate the owner's details
-    .exec();
-
-  // Step 3: Check if resource exists or is blocked
-  if (!resource) {
-    console.error("Resource not found, slug:", resourceSlug);
-    throw new ApiError(404, "Resource not found");
-  }
-
-  if (resource.isBlocked) {
-    console.error("Resource is blocked:", resourceSlug);
-    throw new ApiError(404, "Resource is blocked");
-  }
-
-  // Step 4: Return the resource with the owner's details
-  return res.status(200).json({
-    status: 200,
-    message: "Resource fetched successfully",
-    data: resource, // Resource includes the populated owner field
-  });
-});
-const updateResource = asyncHandler(async (req, res) => {
   const { resourceSlug } = req.params; // Extract the resourceSlug from the request parameters
-  const { title, description } = req.body; // Extract the title and description from the request body
+
+  try {
+    // Find the resource by slug
+    const resource = await Resource.findOne({ slug: resourceSlug })
+      .populate("owner", "fullName username avatar") // Populate the owner's details
+      .exec();
+
+    // Check if the resource exists
+    if (!resource) {
+      console.error(`Resource with slug ${resourceSlug} not found.`);
+      throw new ApiError(404, "Resource not found");
+    }
+
+    // Check if the resource is blocked
+    if (resource.isBlocked) {
+      console.error(`Resource with slug ${resourceSlug} is blocked.`);
+      throw new ApiError(404, "Resource is blocked");
+    }
+
+    // Return the resource details
+    return res.status(200).json({
+      status: 200,
+      message: "Resource fetched successfully",
+      data: resource, // Resource includes the populated owner field
+    });
+  } catch (error) {
+    console.error("Error fetching resource by slug:", error);
+    throw new ApiError(500, "Internal server error while fetching resource");
+  }
+});
+
+const updateResource = asyncHandler(async (req, res) => {
+  const { resourceSlug } = req.params; // Extract resourceSlug from request parameters
+  const { title, description, semester, branch, file } = req.body; // Extract other fields if needed
+
+  console.log("Resource Slug:", resourceSlug);
 
   // Validate if title and description are provided and not empty
   if (!title?.trim() || !description?.trim()) {
     throw new ApiError(400, "Title and description are required");
   }
 
-  // Find the resource by slug and ensure the resource exists
-  const resource = await Resource.findOne({ slug: resourceSlug });
+  // Find the resource by slug (slug is used as the unique identifier in this case)
+  const resource = await Resource.findOne({ slug: resourceSlug }); // Use slug to find the resource
+  console.log("Resource:", resource);
 
   if (!resource || resource.isBlocked) {
-    throw new ApiError(404, "Resource not found");
+    throw new ApiError(404, "Resource not found or is blocked");
   }
 
-  // Step 1: Check if the logged-in user is the owner of the resource or an admin
+  // Check if the logged-in user is the owner of the resource or an admin
   const isOwner = resource.owner.toString() === req.user._id.toString();
   const isAdmin = req.user.role === "admin";
 
@@ -234,50 +225,52 @@ const updateResource = asyncHandler(async (req, res) => {
     throw new ApiError(403, "You are not authorized to update this resource");
   }
 
-  // Step 2: Update the resource title and description
+  // Update the resource fields (title and description are mandatory)
   resource.title = title;
   resource.description = description;
 
-  // Step 3: Save the updated resource to the database
+  // Optionally, update other fields if provided
+  if (semester) resource.semester = semester;
+  if (branch) resource.branch = branch;
+  if (file) resource.file = file;
+
+  // Save the updated resource to the database
   const updatedResource = await resource.save();
 
-  // Step 4: Return the updated resource along with a success message
+  // Return the updated resource along with a success message
   return res
     .status(200)
     .json(
       new ApiResponse(200, updatedResource, "Resource updated successfully")
     );
 });
-const deleteResource = asyncHandler(async (req, res) => {
-  const { resourceSlug } = req.params; // Extract the resourceSlug from the request parameters
 
-  // Step 1: Find the resource by slug
+const deleteResource = asyncHandler(async (req, res) => {
+  const { resourceSlug } = req.params;
+
   const resource = await Resource.findOne({ slug: resourceSlug });
 
-  // If the resource does not exist or is blocked, throw an error
   if (!resource || resource.isBlocked) {
     throw new ApiError(404, "Resource not found");
   }
 
-  // Step 2: Check if the logged-in user is the owner of the resource or an admin
+  // Check if the logged-in user is the owner of the resource or an admin
   const isOwner = String(resource.owner) === String(req.user._id);
   const isAdmin = req.user.role === "admin";
 
-  // If neither owner nor admin, throw error
   if (!isOwner && !isAdmin) {
     throw new ApiError(403, "You are not authorized to delete this resource");
   }
 
-  // Step 3: Remove the resource reference from the owner's resources array
+  // Remove the resource reference from the owner's resources array using resource._id
   await User.updateOne(
     { _id: resource.owner }, // Find the owner of the resource
-    { $pull: { resources: resourceSlug } } // Remove the resourceSlug from the owner's resources array
+    { $pull: { resources: resource._id } } // Use resource._id here, not the slug
   );
 
-  // Step 4: Delete the resource from the Resource collection
+  // Delete the resource from the Resource collection
   await Resource.findOneAndDelete({ slug: resourceSlug });
 
-  // Step 5: Return a success response
   return res
     .status(200)
     .json(new ApiResponse(200, null, "Resource deleted successfully"));

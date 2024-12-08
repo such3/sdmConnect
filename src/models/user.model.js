@@ -60,7 +60,7 @@ const userSchema = new Schema(
     },
     resources: [
       {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "Resource",
       },
     ],

@@ -87,21 +87,21 @@ router.route("/resources").get(verifyJWT, getAllResources); // Fetch all resourc
  * @description Get a single resource by slug
  * @access Private (requires JWT)
  */
-router.route("/resource/:slug").get(verifyJWT, getSingleResource); // Fetch a specific resource by slug
+router.route("/resource/:resourceSlug").get(verifyJWT, getSingleResource); // Fetch a specific resource by slug
 
 /**
  * @route PUT /resource/:slug
  * @description Update an existing resource by slug
  * @access Private (requires JWT)
  */
-router.route("/resource/:slug").put(verifyJWT, updateResource); // Resource update handler by slug
+router.route("/resource/:resourceSlug").put(verifyJWT, updateResource); // Resource update handler by slug
 
 /**
  * @route DELETE /resource/:slug
  * @description Delete a resource by slug
  * @access Private (requires JWT)
  */
-router.route("/resource/:slug").delete(verifyJWT, deleteResource); // Resource deletion handler by slug
+router.route("/resource/:resourceSlug").delete(verifyJWT, deleteResource); // Resource deletion handler by slug
 
 router.route("/profile").get(verifyJWT, getCurrentUser); // Fetch a specific user
 // Rating Routes (Secured for authenticated users)

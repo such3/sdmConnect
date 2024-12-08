@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 import { Rating } from "./rating.model.js";
 import dbErrorHandler from "../utils/dbErrorHandler.js"; // Import error handler
-import slugify from "slugify"; // Import slugify to generate slugs
-import crypto from "crypto";
+import { v4 as uuidv4 } from "uuid"; // Import uuid for generating unique identifiers
+
 const resourceSchema = new mongoose.Schema(
   {
     title: {
@@ -48,6 +48,7 @@ const resourceSchema = new mongoose.Schema(
     slug: {
       type: String,
       trim: true,
+      unique: true, // Ensure that the slug is unique
     },
   },
   {
@@ -55,28 +56,25 @@ const resourceSchema = new mongoose.Schema(
   }
 );
 
+// Pre-save hook to generate a unique slug based on uuid only for new resources
 resourceSchema.pre("save", async function (next) {
   try {
-    // Ensure title exists
-    if (!this.title || this.title.trim() === "") {
-      return next(new Error("Title is required to generate a slug."));
-    }
+    // If this is a new resource, generate a slug
+    if (this.isNew) {
+      this.slug = uuidv4(); // Use uuid to generate a random, unique string
 
-    // Generate the slug from the title
-    this.slug = slugify(this.title, { lower: true, strict: true });
-
-    // Check if the slug already exists in the database
-    let existingResource = await mongoose.models.Resource.findOne({
-      slug: this.slug,
-    });
-
-    // If the slug exists, append a unique identifier to make it unique
-    while (existingResource) {
-      // Generate a random string and append it to the slug
-      this.slug = `${slugify(this.title, { lower: true, strict: true })}-${crypto.randomBytes(4).toString("hex")}`;
-      existingResource = await mongoose.models.Resource.findOne({
+      // Check if the slug already exists in the database
+      let existingResource = await mongoose.models.Resource.findOne({
         slug: this.slug,
       });
+
+      // If the slug already exists, regenerate it until it is unique
+      while (existingResource) {
+        this.slug = uuidv4(); // Generate a new UUID
+        existingResource = await mongoose.models.Resource.findOne({
+          slug: this.slug,
+        });
+      }
     }
 
     // Continue with save operation
@@ -86,6 +84,7 @@ resourceSchema.pre("save", async function (next) {
     next(error); // Pass the error to the next middleware
   }
 });
+
 // Method to get the average rating
 resourceSchema.methods.getAverageRating = async function () {
   try {
