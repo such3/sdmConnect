@@ -1,5 +1,6 @@
 import asyncHandler from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
+import { Comment } from "../models/comment.model.js";
 import { Resource } from "../models/resource.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.model.js";
@@ -248,13 +249,14 @@ const updateResource = asyncHandler(async (req, res) => {
 const deleteResource = asyncHandler(async (req, res) => {
   const { resourceSlug } = req.params;
 
+  // Step 1: Find the resource
   const resource = await Resource.findOne({ slug: resourceSlug });
 
   if (!resource || resource.isBlocked) {
     throw new ApiError(404, "Resource not found");
   }
 
-  // Check if the logged-in user is the owner of the resource or an admin
+  // Step 2: Check if the logged-in user is the owner or an admin
   const isOwner = String(resource.owner) === String(req.user._id);
   const isAdmin = req.user.role === "admin";
 
@@ -262,18 +264,28 @@ const deleteResource = asyncHandler(async (req, res) => {
     throw new ApiError(403, "You are not authorized to delete this resource");
   }
 
-  // Remove the resource reference from the owner's resources array using resource._id
+  // Step 3: Remove the resource reference from the owner's resources array
   await User.updateOne(
     { _id: resource.owner }, // Find the owner of the resource
-    { $pull: { resources: resource._id } } // Use resource._id here, not the slug
+    { $pull: { resources: resource._id } } // Remove resource._id from the owner's resources
   );
 
-  // Delete the resource from the Resource collection
+  // Step 4: Delete associated comments by matching the resource's ID
+  await Comment.deleteMany({ resource: resource._id }); // Assuming the comment model has a 'resourceId' field
+
+  // Step 5: Delete the resource from the Resource collection
   await Resource.findOneAndDelete({ slug: resourceSlug });
 
+  // Step 6: Send success response
   return res
     .status(200)
-    .json(new ApiResponse(200, null, "Resource deleted successfully"));
+    .json(
+      new ApiResponse(
+        200,
+        null,
+        "Resource and associated comments deleted successfully"
+      )
+    );
 });
 
 // // Controller for downloading a resource file
