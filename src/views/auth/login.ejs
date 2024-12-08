@@ -102,4 +102,11 @@
 
 <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
 
+<script>
+  const notyfMessage = "<%= notyfMessage %>";
+  if (notyfMessage) {
+    const notyf = new Notyf();
+    notyf.success(notyfMessage);
+  }
+</script>
 <%- include('../partials/footer') %>

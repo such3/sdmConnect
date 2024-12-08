@@ -2,7 +2,6 @@ import mongoose, { Schema } from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
-// User Schema
 const userSchema = new Schema(
   {
     username: {
@@ -68,17 +67,6 @@ const userSchema = new Schema(
       type: String,
       required: [true, "Password is required"],
       min: [8, "Password must be at least 8 characters long"],
-      // validate: {
-      //   validator: function (v) {
-      //     // Password should contain at least:
-      //     // 1 uppercase letter, 1 lowercase letter, 1 digit, 1 special character, and minimum length of 8
-      //     return /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/.test(
-      //       v
-      //     );
-      //   },
-      //   message:
-      //     "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
-      // },
     },
     isBlocked: {
       type: Boolean,
@@ -87,12 +75,13 @@ const userSchema = new Schema(
     refreshToken: {
       type: String,
     },
-    // New fields for OTP functionality
     passwordResetOtp: {
-      type: String, // Store OTP as a string
+      type: String,
+      default: null, // Default to null
     },
     passwordResetOtpExpires: {
-      type: Date, // Store expiration time for OTP
+      type: Date,
+      default: null, // Default to null
     },
   },
   {
@@ -102,8 +91,6 @@ const userSchema = new Schema(
 
 // Pre-save hook for hashing password
 userSchema.pre("save", async function (next) {
-  console.log("Pre-save hook triggered for user:", this.username);
-
   if (!this.isModified("password") || this.password.startsWith("$2b$")) {
     return next();
   }
@@ -122,9 +109,9 @@ userSchema.methods.isPasswordCorrect = async function (password) {
   return match;
 };
 
-// Method to generate an access token for the user
+// Method to generate an access token
 userSchema.methods.generateAccessToken = function () {
-  const accessToken = jwt.sign(
+  return jwt.sign(
     {
       _id: this._id,
       username: this.username,
@@ -136,10 +123,9 @@ userSchema.methods.generateAccessToken = function () {
       expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
     }
   );
-  return accessToken;
 };
 
-// Method to generate a refresh token for the user and save it to the database
+// Method to generate a refresh token
 userSchema.methods.generateRefreshToken = function () {
   const refreshToken = jwt.sign(
     {
