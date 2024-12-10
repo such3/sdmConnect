@@ -87,6 +87,16 @@ const userSchema = new Schema(
       type: Date,
       default: null,
     },
+
+    // New fields for password reset request tracking
+    passwordResetRequests: {
+      type: Number,
+      default: 0,
+    },
+    lastPasswordResetRequest: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,
@@ -143,6 +153,37 @@ userSchema.methods.generateRefreshToken = function () {
 
   this.refreshToken = refreshToken;
   return refreshToken;
+};
+
+// Method to check if the user has exceeded the limit of reset requests
+userSchema.methods.canRequestPasswordReset = function () {
+  const currentTime = new Date();
+  const lastRequestTime = this.lastPasswordResetRequest;
+
+  // If no reset request was made before, allow the request
+  if (!lastRequestTime) {
+    return true;
+  }
+
+  // Check if 1 hour has passed since the last request
+  const oneHourDifference = (currentTime - lastRequestTime) / 1000 / 60 / 60;
+
+  // If more than 1 hour has passed, reset the counter
+  if (oneHourDifference >= 1) {
+    this.passwordResetRequests = 0; // Reset request count
+    this.lastPasswordResetRequest = currentTime; // Update last request time
+  }
+
+  // If the user has made more than 3 requests within the hour, deny the request
+  if (this.passwordResetRequests >= 3) {
+    return false;
+  }
+
+  // Otherwise, allow the request and increment the count
+  this.passwordResetRequests += 1;
+  this.lastPasswordResetRequest = currentTime; // Update last request time
+
+  return true;
 };
 
 export const User = mongoose.model("User", userSchema);

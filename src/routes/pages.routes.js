@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { isAuthenticated, verifyJWT } from "../middlewares/auth.middleware.js"; // JWT Middleware for authentication
 import { publicProfile } from "../controllers/user.controller.js";
+import asyncHandler from "../utils/asyncHandler.js";
 import {
   createResource,
   getAllResources,
@@ -9,6 +10,7 @@ import {
   deleteResource,
 } from "../controllers/resource.controller.js";
 import { verify } from "crypto";
+
 import {
   requestEmailVerification,
   verifyEmail,
@@ -255,17 +257,22 @@ router.get("/upload", verifyJWT, async (req, res) => {
   res.render("upload");
 });
 
-// Route to request email verification
-router.post("/request-email-verification", requestEmailVerification);
-
-// Route to verify email and render password reset page
-router.get("/verify-email", verifyEmail);
-
-// Route to set a new password
-router.post("/set-new-password", setNewPassword);
-
-// Render Request Email Verification Page
+// Email verification page (GET request to show the form or status message)
 router.get("/email-verification", (req, res) => {
-  res.render("request-email-verification", { notyfMessage: null });
+  res.render("email-verification");
+});
+router.get("/success", (req, res) => {
+  res.render("success");
+});
+// Request email verification (POST request to handle form submission)
+router.post("/email-verification", requestEmailVerification);
+
+// Set new password page (GET request to show the reset form)
+router.get("/set-new-password", verifyEmail);
+
+// Set new password (POST request to handle password reset)
+router.post("/set-new-password", setNewPassword);
+router.get("/reset-password", (req, res) => {
+  res.render("email-verification");
 });
 export default router;

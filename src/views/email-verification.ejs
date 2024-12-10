@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Set New Password</title>
+    <title>Email Verification</title>
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -13,11 +13,6 @@
       href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css"
     />
     <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
-    <!-- Font Awesome CDN for icons -->
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-      rel="stylesheet"
-    />
   </head>
   <body class="bg-gray-800 text-white">
     <!-- Navbar -->
@@ -52,34 +47,27 @@
     <section class="py-16 bg-gray-800">
       <div class="max-w-3xl mx-auto bg-gray-700 p-12 rounded-lg shadow-xl">
         <h2 class="text-3xl font-bold text-white mb-8 text-center">
-          Set New Password
+          Email Verification
         </h2>
 
-        <!-- Set New Password Form -->
-        <form action="/pages/set-new-password" method="POST" class="space-y-6">
-          <input type="hidden" name="email" value="<%= email %>" />
-          <input type="hidden" name="token" value="<%= token %>" />
-
+        <!-- Email Verification Form -->
+        <form
+          action="/pages/email-verification"
+          method="POST"
+          class="space-y-6"
+        >
           <div class="space-y-2">
-            <label for="newPassword" class="text-lg text-gray-300"
-              >Enter new password:</label
+            <label for="email" class="text-lg text-gray-300"
+              >Enter your email to reset your password:</label
             >
-            <div class="relative">
-              <input
-                type="password"
-                name="newPassword"
-                id="newPassword"
-                class="input input-bordered w-full text-white bg-gray-600 rounded-lg p-4 focus:ring-2 focus:ring-blue-500 transition ease-in-out duration-300"
-                required
-              />
-              <button
-                type="button"
-                id="togglePassword"
-                class="absolute top-1/2 right-4 transform -translate-y-1/2 text-gray-400 hover:text-white focus:outline-none"
-              >
-                <i class="fas fa-eye"></i>
-              </button>
-            </div>
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              id="email"
+              class="input input-bordered w-full text-white bg-gray-600 rounded-lg p-4 focus:ring-2 focus:ring-blue-500 transition ease-in-out duration-300"
+              required
+            />
           </div>
 
           <!-- Submit Button -->
@@ -88,8 +76,24 @@
               type="submit"
               class="w-full py-3 text-lg rounded-lg bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition ease-in-out duration-300"
             >
-              Set New Password
+              Send Verification Email
             </button>
+          </div>
+
+          <!-- Register & Login Links -->
+          <div class="text-sm text-gray-400">
+            <p>
+              Don't have an account?
+              <a href="/pages/register" class="text-blue-400 hover:underline"
+                >Register here</a
+              >
+            </p>
+            <p>
+              Already have an account?
+              <a href="/pages/login" class="text-blue-400 hover:underline"
+                >Login here</a
+              >
+            </p>
           </div>
         </form>
       </div>
@@ -115,22 +119,6 @@
           notyf.error(message);
         }
       }
-
-      // Show/Hide Password Logic
-      const togglePassword = document.getElementById("togglePassword");
-      const passwordField = document.getElementById("newPassword");
-
-      togglePassword.addEventListener("click", function () {
-        // Toggle password visibility
-        const type = passwordField.type === "password" ? "text" : "password";
-        passwordField.type = type;
-
-        // Toggle icon between eye and eye-slash
-        this.innerHTML =
-          type === "password"
-            ? '<i class="fas fa-eye"></i>'
-            : '<i class="fas fa-eye-slash"></i>';
-      });
     </script>
   </body>
 </html>
