@@ -1,7 +1,7 @@
-<!-- index.ejs -->
 <%- include('partials/header') %>
 <script src="/scripts/common.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
+
 <!-- Hero Section -->
 <section id="home" class="relative overflow-hidden bg-gray-900">
   <!-- Background Overlay -->
@@ -13,27 +13,31 @@
     <!-- Main Content -->
     <div class="max-w-5xl mx-auto">
       <h1
-        class="text-3xl md:text-4xl font-semibold text-white leading-tight mb-6"
+        class="text-3xl md:text-5xl font-bold text-white leading-tight mb-6 tracking-wide"
       >
         Unlock the Future of Digital Innovation with
         <span class="text-indigo-400">sdmConnect</span>
       </h1>
-      <p class="text-lg md:text-xl font-light text-white opacity-90 mb-8">
+      <p
+        class="text-lg md:text-xl font-light text-white opacity-90 mb-8 max-w-2xl mx-auto"
+      >
         Empowering professionals with innovative solutions and a collaborative
         ecosystem to <span class="text-purple-700">accelerate</span> growth.
       </p>
-      <a
-        href="/pages/register"
-        class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-5 text-lg font-semibold rounded-xl shadow-lg transition-all duration-300 transform hover:translate-y-1 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
-      >
-        Start Now
-      </a>
-      <a
-        href="/pages/login"
-        class="inline-block bg-orange-600 hover:bg-orange-700 m-10 text-white px-10 py-5 text-lg font-semibold rounded-xl shadow-lg transition-all duration-300 transform hover:translate-y-1 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
-      >
-        Login Now
-      </a>
+      <div class="space-x-4">
+        <a
+          href="/pages/register"
+          class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-5 text-lg font-semibold rounded-xl shadow-lg transition-all duration-300 transform hover:translate-y-1 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
+        >
+          Start Now
+        </a>
+        <a
+          href="/pages/login"
+          class="inline-block bg-orange-600 hover:bg-orange-700 m-10 text-white px-10 py-5 text-lg font-semibold rounded-xl shadow-lg transition-all duration-300 transform hover:translate-y-1 hover:scale-105 hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
+        >
+          Login Now
+        </a>
+      </div>
     </div>
   </div>
 </section>
@@ -41,8 +45,8 @@
 <!-- About Section -->
 <section id="about" class="py-16 bg-gray-800">
   <div class="main-container text-center">
-    <h2 class="text-4xl font-bold mb-8">About Us</h2>
-    <p class="text-lg mb-6">
+    <h2 class="text-4xl font-bold text-white mb-8">About Us</h2>
+    <p class="text-lg mb-6 max-w-2xl mx-auto">
       We are a team of passionate individuals committed to delivering the best
       experiences for our clients. Our goal is to create innovative solutions
       that meet your needs and exceed your expectations.
@@ -50,7 +54,7 @@
     <img
       src="/assets/images/placeholder.jpg"
       alt="About Us"
-      class="mx-auto rounded-lg shadow-lg"
+      class="mx-auto rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300"
     />
   </div>
 </section>
@@ -61,7 +65,9 @@
     <h2 class="text-4xl font-bold text-white mb-8">Our Features</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
       <!-- Feature 1 -->
-      <div class="card bg-gray-800 text-white p-6 rounded-lg shadow-lg">
+      <div
+        class="card bg-gray-800 text-white p-6 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300"
+      >
         <div class="text-blue-400 mb-4">
           <img
             src="/icons/fast-icon.png"
@@ -75,7 +81,9 @@
         </p>
       </div>
       <!-- Feature 2 -->
-      <div class="card bg-gray-800 text-white p-6 rounded-lg shadow-lg">
+      <div
+        class="card bg-gray-800 text-white p-6 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300"
+      >
         <div class="text-blue-400 mb-4">
           <img
             src="/icons/custom-icon.png"
@@ -90,7 +98,9 @@
         </p>
       </div>
       <!-- Feature 3 -->
-      <div class="card bg-gray-800 text-white p-6 rounded-lg shadow-lg">
+      <div
+        class="card bg-gray-800 text-white p-6 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300"
+      >
         <div class="text-blue-400 mb-4">
           <img
             src="/icons/global-icon.png"
@@ -114,7 +124,9 @@
     <h2 class="text-4xl font-bold text-white mb-8">Meet Our Team</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
       <!-- Team Member 1 -->
-      <div class="card bg-gray-700 text-white p-6 rounded-lg shadow-lg">
+      <div
+        class="card bg-gray-700 text-white p-6 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300"
+      >
         <img
           src="/assets/images/profile.png"
           alt="Team Member 1"
@@ -124,7 +136,9 @@
         <p class="text-gray-400">Developer</p>
       </div>
       <!-- Team Member 2 -->
-      <div class="card bg-gray-700 text-white p-6 rounded-lg shadow-lg">
+      <div
+        class="card bg-gray-700 text-white p-6 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300"
+      >
         <img
           src="/assets/images/profile.png"
           alt="Team Member 2"
@@ -134,7 +148,9 @@
         <p class="text-gray-400">Developer</p>
       </div>
       <!-- Team Member 3 -->
-      <div class="card bg-gray-700 text-white p-6 rounded-lg shadow-lg">
+      <div
+        class="card bg-gray-700 text-white p-6 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300"
+      >
         <img
           src="/assets/images/profile.png"
           alt="Team Member 3"
@@ -144,7 +160,9 @@
         <p class="text-gray-400">Developer</p>
       </div>
       <!-- Team Member 4 -->
-      <div class="card bg-gray-700 text-white p-6 rounded-lg shadow-lg">
+      <div
+        class="card bg-gray-700 text-white p-6 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300"
+      >
         <img
           src="/assets/images/profile.png"
           alt="Team Member 4"
@@ -158,7 +176,7 @@
 </section>
 
 <!-- Contact Form -->
-<section class="py-16 bg-gray-800">
+<section id="contact" class="py-16 bg-gray-800">
   <div class="max-w-3xl mx-auto bg-gray-700 p-12 rounded-lg shadow-xl">
     <h2 class="text-3xl font-bold text-white mb-8 text-center">Contact Us</h2>
     <form action="#" method="POST" class="space-y-6">
@@ -213,6 +231,7 @@
     </form>
   </div>
 </section>
+
 <script>
   const menuToggle = document.getElementById("menu-toggle");
   const mobileMenu = document.getElementById("mobile-menu");

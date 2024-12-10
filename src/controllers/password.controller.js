@@ -1,11 +1,10 @@
-import { User } from "../models/User.js";
+import { User } from "../models/user.model.js";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 import formData from "form-data";
 import Mailgun from "mailgun.js";
-import ApiError from "../utils/ApiError.js";
-import ApiResponse from "../utils/ApiResponse.js";
-import asyncHandler from "../middleware/asyncHandler.js";
+import { ApiError } from "../utils/ApiError.js";
+import asyncHandler from "../utils/asyncHandler.js";
 
 // Configure Mailgun
 const mailgun = new Mailgun(formData);
@@ -13,9 +12,8 @@ const mg = mailgun.client({
   username: "api",
   key: process.env.MAILGUN_API_KEY || "key-yourkeyhere",
 });
-
-// Request Password Reset Handler
-export const requestPasswordReset = asyncHandler(async (req, res, next) => {
+// Request Email Verification Handler
+export const requestEmailVerification = asyncHandler(async (req, res, next) => {
   const { email } = req.body;
 
   const user = await User.findOne({ email });
@@ -23,79 +21,82 @@ export const requestPasswordReset = asyncHandler(async (req, res, next) => {
     return next(new ApiError(404, "User not found"));
   }
 
-  // Generate OTP
-  const otp = crypto.randomInt(100000, 999999).toString();
-  const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-
-  // Save OTP and expiration in the database
-  user.passwordResetOtp = otp;
-  user.passwordResetOtpExpires = otpExpires;
+  // Generate a verification token
+  const verificationToken = crypto.randomBytes(32).toString("hex");
+  user.emailVerificationToken = verificationToken;
+  user.emailVerificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
   await user.save();
 
-  // Send OTP email using Mailgun
+  // Send verification email
   const domain = process.env.MAILGUN_DOMAIN || "sandbox-123.mailgun.org";
+  const verificationUrl = `${req.protocol}://${req.get("host")}/pages/verify-email?token=${verificationToken}&email=${email}`;
+
   const emailData = {
-    from: "Password Reset <no-reply@yourdomain.com>",
+    from: "Account Verification <no-reply@sdmConnect.com>",
     to: [email],
-    subject: "Password Reset Request",
-    text: `Your OTP is: ${otp}. Valid for 10 minutes.`,
-    html: `<p>Your OTP is: <strong>${otp}</strong>. Valid for 10 minutes.</p>`,
+    subject: "Email Verification",
+    text: `Please verify your email by clicking the link: ${verificationUrl}`,
+    html: `<p>Please verify your email by clicking the link below:</p>
+           <a href="${verificationUrl}">${verificationUrl}</a>`,
   };
 
   try {
     await mg.messages.create(domain, emailData);
-    return res
-      .status(200)
-      .json(new ApiResponse(200, "OTP sent to your email", null));
+    return res.redirect(
+      `/pages/verify-email?status=success&message=Verification%20email%20sent`
+    );
   } catch (error) {
     console.error(error);
-    return next(new ApiError(500, "Failed to send OTP email"));
+    return next(new ApiError(500, "Failed to send verification email"));
   }
 });
-
-// Verify OTP Handler
-export const verifyOtp = asyncHandler(async (req, res, next) => {
-  const { email, otp } = req.body;
+// Verify Email Handler
+export const verifyEmail = asyncHandler(async (req, res, next) => {
+  const { token, email } = req.query;
 
   const user = await User.findOne({ email });
-  if (!user || user.passwordResetOtp !== otp) {
-    return next(new ApiError(400, "Invalid OTP"));
+  if (!user || user.emailVerificationToken !== token) {
+    return res.redirect(
+      `/pages/verify-email?status=error&message=Invalid%20or%20expired%20verification%20link`
+    );
   }
 
-  if (new Date() > user.passwordResetOtpExpires) {
-    return next(new ApiError(400, "OTP expired"));
+  if (new Date() > user.emailVerificationExpires) {
+    return res.redirect(
+      `/pages/verify-email?status=error&message=Verification%20link%20has%20expired`
+    );
   }
 
-  // If OTP is valid, render reset password page with email and OTP
-  return res.render("reset-password", {
-    email,
-    otp,
-    notyfMessage: "OTP verified. Please reset your password.",
-  });
+  // Render the page to set the new password
+  res.render("set-new-password", { email, token, notyfMessage: null });
 });
-
-// Reset Password Handler
-export const resetPassword = asyncHandler(async (req, res, next) => {
-  const { email, otp, newPassword } = req.body;
+// Set New Password Handler
+export const setNewPassword = asyncHandler(async (req, res, next) => {
+  const { email, token, newPassword } = req.body;
 
   const user = await User.findOne({ email });
-  if (!user || user.passwordResetOtp !== otp) {
-    return next(new ApiError(400, "Invalid OTP"));
+  if (!user || user.emailVerificationToken !== token) {
+    return res.redirect(
+      `/pages/set-new-password?status=error&message=Invalid%20or%20expired%20token&email=${email}&token=${token}`
+    );
   }
 
-  if (new Date() > user.passwordResetOtpExpires) {
-    return next(new ApiError(400, "OTP expired"));
+  if (new Date() > user.emailVerificationExpires) {
+    return res.redirect(
+      `/pages/set-new-password?status=error&message=Token%20has%20expired&email=${email}&token=${token}`
+    );
   }
 
   // Update the password
   const hashedPassword = await bcrypt.hash(newPassword, 10);
   user.password = hashedPassword;
-  user.passwordResetOtp = null;
-  user.passwordResetOtpExpires = null;
+  user.emailVerificationToken = null;
+  user.emailVerificationExpires = null;
+  user.isVerified = true;
   await user.save();
 
-  // Redirect to login page with a success message
-  return res.render("auth/login", {
-    notyfMessage: "Password reset successfully. You can now log in.",
-  });
+  // Redirect with success message
+  return res.redirect(
+    `/pages/email-verification?success=true&message=Password%20reset%20successful`
+  );
 });

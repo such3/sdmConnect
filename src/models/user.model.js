@@ -75,13 +75,17 @@ const userSchema = new Schema(
     refreshToken: {
       type: String,
     },
-    passwordResetOtp: {
-      type: String,
-      default: null, // Default to null
+    isVerified: {
+      type: Boolean,
+      default: false,
     },
-    passwordResetOtpExpires: {
+    emailVerificationToken: {
+      type: String,
+      default: null,
+    },
+    emailVerificationExpires: {
       type: Date,
-      default: null, // Default to null
+      default: null,
     },
   },
   {

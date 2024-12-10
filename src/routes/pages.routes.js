@@ -9,6 +9,11 @@ import {
   deleteResource,
 } from "../controllers/resource.controller.js";
 import { verify } from "crypto";
+import {
+  requestEmailVerification,
+  verifyEmail,
+  setNewPassword,
+} from "../controllers/password.controller.js";
 
 const router = new Router();
 
@@ -250,4 +255,17 @@ router.get("/upload", verifyJWT, async (req, res) => {
   res.render("upload");
 });
 
+// Route to request email verification
+router.post("/request-email-verification", requestEmailVerification);
+
+// Route to verify email and render password reset page
+router.get("/verify-email", verifyEmail);
+
+// Route to set a new password
+router.post("/set-new-password", setNewPassword);
+
+// Render Request Email Verification Page
+router.get("/email-verification", (req, res) => {
+  res.render("request-email-verification", { notyfMessage: null });
+});
 export default router;

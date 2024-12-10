@@ -1,4 +1,4 @@
-// import { Notyf } from "notyf"; // Import Notyf
+import { Notyf } from "notyf"; // Import Notyf
 
 document.addEventListener("DOMContentLoaded", function () {
   const urlParams = new URLSearchParams(window.location.search);
