@@ -10,12 +10,20 @@ import {
   deleteResource,
 } from "../controllers/resource.controller.js";
 import { verify } from "crypto";
+import { verifyAdmin } from "../middlewares/admin.middleware.js"; // Admin check middleware
 
 import {
   requestEmailVerification,
   verifyEmail,
   setNewPassword,
 } from "../controllers/password.controller.js";
+
+import {
+  deleteUser,
+  blockResource,
+  unblockResource,
+} from "../controllers/admin.controller.js"; // Import admin controller functions
+import { adminDashboard } from "../controllers/admin.controller.js";
 
 const router = new Router();
 
@@ -275,4 +283,6 @@ router.post("/set-new-password", setNewPassword);
 router.get("/reset-password", (req, res) => {
   res.render("email-verification");
 });
+
+router.get("/admin-panel",verifyJWT,verifyAdmin,adminDashboard)
 export default router;

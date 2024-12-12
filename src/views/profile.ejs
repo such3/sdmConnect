@@ -44,6 +44,9 @@
         <li><a href="/" class="hover:text-blue-500 transition">Home</a></li>
         <li><a href="/pages/upload" class="hover:text-blue-500 transition">Upload</a></li>
         <li><a href="/pages/resources" class="hover:text-blue-500 transition">Find</a></li>
+        <% if (user.role === "admin") { %>
+          <li><a href="/pages/admin-panel" class="hover:text-blue-500 transition">Admin Panel</a></li>
+        <% } %>
         <li><a href="#" id="logout" class="hover:text-blue-500 transition">Logout</a></li>
       </ul>
     </div>

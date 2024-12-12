@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>sdmConnect - Admin Dashboard</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Notyf for Notifications -->
+  <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Notyf CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+</head>
+
+<body class="bg-gray-900 font-sans text-white flex flex-col min-h-screen">
+
+  <!-- Navbar -->
+  <nav class="bg-gray-800 p-4 shadow-md">
+    <div class="container mx-auto flex justify-between items-center">
+      <a href="#" class="text-white text-3xl font-bold hover:text-blue-500 transition-all">sdmConnect - Admin</a>
+      <div>
+        <a href="/" class="text-gray-300 hover:text-blue-500 mx-4">Home</a>
+        <a href="/pages/profile" class="text-gray-300 hover:text-blue-500 mx-4">Profile</a>
+        <a href="#" class="text-gray-300 hover:text-blue-500 mx-4">Manage</a>
+        
+      </div>
+    </div>
+  </nav>
+
+  <!-- Dashboard Summary -->
+  <section class="w-full mt-8 p-6 bg-gray-800 rounded-lg shadow-lg">
+    <h2 class="text-2xl font-bold mb-6">Dashboard Overview</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Total Resources -->
+      <div class="bg-gray-700 p-6 rounded-lg shadow-lg transform transition-all hover:scale-105">
+        <h3 class="text-lg font-medium">Total Resources Published</h3>
+        <p class="text-4xl font-bold mt-2"><%= totalResources %></p>
+      </div>
+
+      <!-- Total Contributors -->
+      <div class="bg-gray-700 p-6 rounded-lg shadow-lg transform transition-all hover:scale-105">
+        <h3 class="text-lg font-medium">Total Contributors</h3>
+        <p class="text-4xl font-bold mt-2"><%= totalContributors %></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Resources Per Branch (Cards) -->
+  <section class="w-full mt-8 p-6 bg-gray-800 rounded-lg shadow-lg">
+    <h2 class="text-2xl font-bold mb-6">Resources Per Branch</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% resourcesPerBranch.forEach(branch => { %>
+        <div class="bg-gray-700 p-6 rounded-lg shadow-lg transform transition-all hover:scale-105">
+          <p><strong>Branch:</strong> <%= branch.name %></p>
+          <p><strong>Total Resources:</strong> <%= branch.total %></p>
+        </div>
+      <% }) %>
+    </div>
+  </section>
+
+  <!-- Resources Per Semester (Cards) -->
+  <section class="w-full mt-8 p-6 bg-gray-800 rounded-lg shadow-lg">
+    <h2 class="text-2xl font-bold mb-6">Resources Per Semester</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% resourcesPerSemester.forEach(sem => { %>
+        <div class="bg-gray-700 p-6 rounded-lg shadow-lg transform transition-all hover:scale-105">
+          <p><strong>Semester <%= sem.id %>:</strong></p>
+          <p><strong>Total Resources:</strong> <%= sem.total %></p>
+        </div>
+      <% }) %>
+    </div>
+  </section>
+
+  <!-- Top Contributors -->
+  <section class="w-full mt-8 p-6 bg-gray-800 rounded-lg shadow-lg">
+    <h2 class="text-2xl font-bold mb-6">Top Contributors</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% topContributors.forEach(contributor => { %>
+        <div class="bg-gray-700 p-6 rounded-lg shadow-lg transform transition-all hover:scale-105 flex items-center">
+          <div class="w-12 h-12 rounded-full overflow-hidden mr-4">
+            <img src="<%= contributor.avatar %>" alt="Avatar" class="w-full h-full object-cover">
+          </div>
+          <div>
+            <p class="font-semibold text-lg"><%= contributor.fullName %></p>
+            <p class="text-gray-400">@<%= contributor.username %></p>
+            <p><strong>Resources:</strong> <%= contributor.totalResources %></p>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </section>
+
+  <!-- Chart Section -->
+  <section class="w-full mt-8 p-6 bg-gray-800 rounded-lg shadow-lg">
+    <h2 class="text-2xl font-bold mb-6">Resource Trends</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="w-full flex justify-center items-center">
+        <canvas id="semesterChart" width="300" height="300" class="max-w-full h-auto"></canvas>
+      </div>
+
+      <div class="w-full flex justify-center items-center">
+        <canvas id="branchChart" width="300" height="300" class="max-w-full h-auto"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-center text-gray-400 py-6 mt-auto">
+    <p>&copy; 2024 sdmConnect | All Rights Reserved</p>
+  </footer>
+
+  <!-- Chart.js Script -->
+  <script>
+    // Resources Per Semester Data
+    const semesterData = {
+      labels: <%- JSON.stringify(resourcesPerSemester.map(sem => `Semester ${sem.id}`)) %>,
+      datasets: [{
+        data: <%- JSON.stringify(resourcesPerSemester.map(sem => sem.total)) %>,
+        backgroundColor: ['#ff9999', '#66b3ff', '#99ff99', '#ffcc99', '#ffb3e6']
+      }]
+    };
+
+    const semesterCtx = document.getElementById('semesterChart').getContext('2d');
+    new Chart(semesterCtx, {
+      type: 'pie',
+      data: semesterData,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            labels: {
+              font: {
+                size: 16
+              }
+            }
+          }
+        }
+      }
+    });
+
+    // Resources Per Branch Data
+    const branchData = {
+      labels: <%- JSON.stringify(resourcesPerBranch.map(branch => branch.name)) %>,
+      datasets: [{
+        data: <%- JSON.stringify(resourcesPerBranch.map(branch => branch.total)) %>,
+        backgroundColor: ['#36A2EB', '#FF6384', '#FFCE56', '#FF5733', '#4BC0C0']
+      }]
+    };
+
+    const branchCtx = document.getElementById('branchChart').getContext('2d');
+    new Chart(branchCtx, {
+      type: 'pie',
+      data: branchData,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            labels: {
+              font: {
+                size: 16
+              }
+            }
+          }
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>

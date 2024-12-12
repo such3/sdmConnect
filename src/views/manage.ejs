@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>sdmConnect - Manage</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-900 font-sans text-white flex flex-col min-h-screen">
+
+  <!-- Navbar -->
+  <nav class="bg-gray-800 p-4 shadow-md">
+    <div class="container mx-auto flex justify-between items-center">
+      <a href="#" class="text-white text-3xl font-bold hover:text-blue-500 transition-all">Admin Dashboard</a>
+      <a href="manage.html" class="text-white hover:text-blue-500 transition-all">Manage</a>
+    </div>
+  </nav>
+
+  <!-- Main Section -->
+  <div class="container mx-auto mt-8 p-6 bg-gray-800 rounded-lg shadow-lg">
+    <h2 class="text-2xl font-bold mb-6 text-center">Manage Users & Resources</h2>
+
+    <!-- Search User Form -->
+    <div class="mb-6">
+      <h3 class="font-bold mb-2">Search User</h3>
+      <input id="searchUser" type="text" placeholder="Enter username" class="w-full p-2 rounded-lg bg-gray-700 mt-2 text-white">
+      <button onclick="searchUser()" class="mt-2 bg-blue-500 p-2 rounded-lg hover:bg-blue-600 transition-all">Search</button>
+    </div>
+
+    <!-- Delete User Form -->
+    <div class="mb-6">
+      <h3 class="font-bold mb-2">Delete User</h3>
+      <input id="deleteUserInput" type="text" placeholder="Enter username to delete" class="w-full p-2 rounded-lg bg-gray-700 mt-2 text-white">
+      <button onclick="deleteUser()" class="mt-2 bg-red-500 p-2 rounded-lg hover:bg-red-600 transition-all">Delete</button>
+    </div>
+
+    <!-- Search Resource Form -->
+    <div class="mb-6">
+      <h3 class="font-bold mb-2">Search Resource</h3>
+      <input id="searchResource" type="text" placeholder="Enter resource slug" class="w-full p-2 rounded-lg bg-gray-700 mt-2 text-white">
+      <button onclick="searchResource()" class="mt-2 bg-blue-500 p-2 rounded-lg hover:bg-blue-600 transition-all">Search</button>
+    </div>
+
+    <!-- Delete Resource Form -->
+    <div class="mb-6">
+      <h3 class="font-bold mb-2">Delete Resource</h3>
+      <input id="deleteResourceInput" type="text" placeholder="Enter resource slug to delete" class="w-full p-2 rounded-lg bg-gray-700 mt-2 text-white">
+      <button onclick="deleteResource()" class="mt-2 bg-red-500 p-2 rounded-lg hover:bg-red-600 transition-all">Delete Resource</button>
+    </div>
+
+  </div>
+
+</body>
+</html>

@@ -3,7 +3,6 @@ import { Resource } from "../models/resource.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
-
 // Admin Dashboard
 const adminDashboard = asyncHandler(async (req, res) => {
   try {
@@ -11,79 +10,79 @@ const adminDashboard = asyncHandler(async (req, res) => {
     const totalResources = await Resource.countDocuments();
 
     // 2. Total Users Contributing Resources
-    const totalUsersContributing =
-      await Resource.distinct("owner").countDocuments();
+    const totalContributors = await Resource.distinct("owner").then((owners) => owners.length);
 
     // 3. Total Resources Per Branch
     const resourcesPerBranch = await Resource.aggregate([
       {
         $group: {
           _id: "$branch", // Group by branch
-          total: { $sum: 1 }, // Count number of resources in each branch
+          total: { $sum: 1 }, // Count resources in each branch
         },
       },
       { $sort: { total: -1 } }, // Sort by descending total
-    ]);
+    ]).then((branches) =>
+      branches.map((branch) => ({
+        name: branch._id,
+        total: branch.total,
+      }))
+    );
 
     // 4. Total Resources Per Semester
     const resourcesPerSemester = await Resource.aggregate([
       {
         $group: {
           _id: "$semester", // Group by semester
-          total: { $sum: 1 }, // Count number of resources in each semester
+          total: { $sum: 1 }, // Count resources in each semester
         },
       },
-      { $sort: { _id: 1 } }, // Sort by ascending semester number
-    ]);
+      { $sort: { _id: 1 } }, // Sort by ascending semester
+    ]).then((semesters) =>
+      semesters.map((semester) => ({
+        id: semester._id,
+        total: semester.total,
+      }))
+    );
 
     // 5. Top 3 Contributors (users with most resources)
     const topContributors = await Resource.aggregate([
       {
         $group: {
-          _id: "$owner", // Group by owner (user)
-          totalResources: { $sum: 1 }, // Count the number of resources per user
+          _id: "$owner", // Group by owner
+          totalResources: { $sum: 1 }, // Count resources for each owner
         },
       },
-      {
-        $sort: { totalResources: -1 }, // Sort by total resources in descending order
-      },
-      { $limit: 3 }, // Limit to the top 3 contributors
+      { $sort: { totalResources: -1 } }, // Sort by descending totalResources
+      { $limit: 3 }, // Limit to top 3
       {
         $lookup: {
-          from: "users", // Lookup user details from the User collection
-          localField: "_id", // Match the owner field from Resource to _id in User collection
+          from: "users", // Lookup users collection
+          localField: "_id", // Match with Resource.owner
           foreignField: "_id",
-          as: "userDetails", // Alias for the user data
+          as: "userDetails", // Alias the user data
         },
       },
-      { $unwind: "$userDetails" }, // Unwind the userDetails array to flatten it
+      { $unwind: "$userDetails" }, // Flatten userDetails array
       {
         $project: {
-          _id: 1,
           totalResources: 1,
-          fullName: "$userDetails.fullName", // Select full name of the user
-          username: "$userDetails.username", // Select username of the user
-          avatar: "$userDetails.avatar", // Select avatar of the user
+          fullName: "$userDetails.fullName",
+          username: "$userDetails.username",
+          avatar: "$userDetails.avatar",
         },
       },
     ]);
 
-    // Return the dashboard summary
-    return res.status(200).json(
-      new ApiResponse(
-        200,
-        {
-          totalResources,
-          totalUsersContributing,
-          resourcesPerBranch,
-          resourcesPerSemester,
-          topContributors,
-        },
-        "Admin Dashboard Data"
-      )
-    );
+    // Render the admin dashboard
+    res.render("admin_dashboard", {
+      totalResources,
+      totalContributors,
+      resourcesPerBranch,
+      resourcesPerSemester,
+      topContributors,
+    });
   } catch (error) {
-    return next(error); // Pass error to the global error handler
+    res.status(500).send({ error: error.message });
   }
 });
 

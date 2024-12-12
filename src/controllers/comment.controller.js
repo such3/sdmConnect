@@ -115,9 +115,9 @@ const getComments = asyncHandler(async (req, res, next) => {
 
   // Populate the comments with user details
   const comments = await Comment.find({ resource: resource._id })
-    .populate("user", "fullName username avatar") // Populating user details
+    .populate("user", "fullName username avatar role") // Populating user details
     .sort({ createdAt: -1 }); // Sorting comments by creation date (newest first)
-
+  // console.log(comments)
   // Return success response with the comments
   return res.status(200).json({
     message: "Comments fetched successfully",

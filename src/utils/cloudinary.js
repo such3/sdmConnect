@@ -1,5 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
-import fs from "fs";
+import fs from "fs/promises"; // Use the promise-based version of fs
 
 // Configure Cloudinary
 cloudinary.config({
@@ -8,55 +8,52 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Function to upload a file to Cloudinary
+// Function to upload a file to Cloudinary and remove it locally
 const uploadOnCloudinary = async (localFilePath) => {
   try {
-    // Ensure the localFilePath exists
     if (!localFilePath) {
       console.error("No file path provided for upload.");
       return null;
     }
 
-    // Log the file path for debugging
     console.log("Uploading file from:", localFilePath);
 
     // Upload the file to Cloudinary
     const response = await cloudinary.uploader.upload(localFilePath, {
-      resource_type: "auto", // Automatically detect the resource type
+      resource_type: "auto",
     });
 
-    // Log the full response for debugging (including the URL)
     console.log("Cloudinary upload response:", response);
 
-    // Remove the file from the local server asynchronously
-    fs.unlink(localFilePath, (err) => {
-      if (err) {
-        console.error("Error removing the local file:", err);
-      } else {
-        console.log(`Local file removed: ${localFilePath}`);
-      }
-    });
+    // Remove the file from the local server after a successful upload
+    await fs.unlink(localFilePath);
+    console.log(`Local file removed: ${localFilePath}`);
 
-    // Return the Cloudinary response
     return response;
   } catch (error) {
-    // Log the error for debugging (including the full error object)
     console.error("Error during Cloudinary upload: ", error);
 
-    // Check if the file exists before attempting to remove it
-    if (localFilePath && fs.existsSync(localFilePath)) {
-      // Remove the file from the server to avoid leaving temporary files
-      fs.unlink(localFilePath, (err) => {
-        if (err) {
-          console.error("Error removing the temporary file:", err);
-        } else {
-          console.log("Temporary file removed from the server:", localFilePath);
-        }
-      });
+    // Ensure the temporary file is cleaned up even on failure
+    if (localFilePath && await fileExists(localFilePath)) {
+      try {
+        await fs.unlink(localFilePath);
+        console.log("Temporary file removed from the server:", localFilePath);
+      } catch (unlinkError) {
+        console.error("Error removing the temporary file:", unlinkError);
+      }
     }
 
-    // Return null to indicate failure
     return null;
+  }
+};
+
+// Helper function to check if a file exists
+const fileExists = async (path) => {
+  try {
+    await fs.stat(path);
+    return true;
+  } catch {
+    return false;
   }
 };
 

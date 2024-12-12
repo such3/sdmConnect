@@ -1,35 +1,64 @@
 <%- include('./partials/header') %>
 <link rel="stylesheet" href="/styles/dist-1.css" />
-<!-- 404 Error Section -->
-<div class="text-center">
-  <br />
-  <br /><br /><br />
-  <br />
-  <h1 class="text-6xl font-bold text-red-500 mb-4">404</h1>
-  <p class="text-2xl text-gray-400 mb-6">
-    Oops! The page you're looking for doesn't exist.
-  </p>
-  <p class="text-xl text-gray-300 mb-8">
-    It seems like the page you're trying to reach has been moved or doesn't
-    exist.
-  </p>
+
+<!-- Error Section -->
+<div class="text-center mt-10">
+  <h1 class="text-6xl font-bold text-red-500 mb-4">Oops!</h1>
+
+  <div id="error-message" class="text-xl text-gray-300 mb-6">
+    <!-- Error message will be dynamically populated -->
+  </div>
 
   <!-- Navigation Buttons -->
-  <div class="flex justify-center gap-4">
-    <a
-      href="/"
-      class="bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600"
-      >Go to Home</a
-    >
+  <div class="flex justify-center gap-4 mt-8">
+    <a href="/" class="bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600">Go to Home</a>
+    <a href="/pages/login" class="bg-green-500 text-white py-2 px-6 rounded-md hover:bg-green-600">Login</a>
   </div>
-  <br />
-  <br /><br /><br />
-  <br />
-  <br />
-  <br /><br /><br />
-  <br />
-  <br />
-  <br />
 </div>
 
+<br />
+<br /><br /><br />
+<br />
+<br />
+<br /><br /><br />
+<br />
+<br />
+<br />
+<br>
+<br>
+<br>
 <%- include('./partials/footer') %>
+
+<!-- Script to Parse and Display Error Message -->
+<script>
+  function getQueryParams() {
+    const params = new URLSearchParams(window.location.search);
+    const error = params.get('error');
+
+    return { error };
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const { error } = getQueryParams();
+    const errorMessageDiv = document.getElementById('error-message');
+
+    if (error) {
+      switch (error) {
+        case 'need-to-login':
+          errorMessageDiv.innerHTML = '<p><strong>Authentication Required!</strong> Please log in to access this page.</p>';
+          break;
+        case 'resource-not-found':
+          errorMessageDiv.innerHTML = '<p><strong>Resource Missing!</strong> The content you are looking for is no longer available.</p>';
+          break;
+        default:
+          errorMessageDiv.innerHTML = `<p><strong>Unexpected Error:</strong> ${error}</p>`;
+      }
+    } else {
+      // No error present, treat it as a 404 error
+      errorMessageDiv.innerHTML = `
+        <p><strong>404 - Page Not Found!</strong></p>
+        <p>Sorry, the page you're looking for seems to have disappeared.</p>
+      `;
+    }
+  });
+</script>
