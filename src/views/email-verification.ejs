@@ -1,124 +1,98 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Email Verification</title>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Email Verification</title>
 
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Notyf CDN -->
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css"
-    />
-    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
-  </head>
-  <body class="bg-gray-800 text-white">
-    <!-- Navbar -->
-    <nav class="bg-gray-800 p-4">
-      <div class="max-w-7xl mx-auto flex justify-between items-center">
-        <a href="#" class="text-white text-2xl font-semibold">sdmConnect</a>
-        <div class="hidden md:flex space-x-6">
-          <a href="/" class="text-white hover:text-blue-400">Home</a>
-        </div>
-        <div class="md:hidden">
-          <button class="btn btn-ghost text-white" id="menu-toggle">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 6h16M4 12h16M4 18h16"
-              ></path>
-            </svg>
-          </button>
-        </div>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Notyf CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+</head>
+<body class="bg-gray-800 text-white">
+
+  <!-- Navbar -->
+  <nav class="bg-gray-800 p-4">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      <a href="#" class="text-white text-2xl font-semibold">sdmConnect</a>
+      <div class="hidden md:flex space-x-6">
+        <a href="/" class="text-white hover:text-blue-400">Home</a>
       </div>
-    </nav>
+      <div class="md:hidden">
+        <button class="btn btn-ghost text-white" id="menu-toggle">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
 
-    <!-- Main content -->
-    <section class="py-16 bg-gray-800">
-      <div class="max-w-3xl mx-auto bg-gray-700 p-12 rounded-lg shadow-xl">
-        <h2 class="text-3xl font-bold text-white mb-8 text-center">
-          Email Verification
-        </h2>
+  <!-- Main Content -->
+  <section class="py-16 bg-gray-800">
+    <div class="max-w-3xl mx-auto bg-gray-700 p-12 rounded-lg shadow-xl">
+      <h2 class="text-3xl font-bold text-white mb-8 text-center">Email Verification</h2>
 
-        <!-- Email Verification Form -->
-        <form
-          action="/pages/email-verification"
-          method="POST"
-          class="space-y-6"
+      <!-- Email Verification Form -->
+      <form action="/pages/email-verification" method="POST" class="space-y-6">
+        <div class="space-y-2">
+          <label for="email" class="text-lg text-gray-300">Enter your email to reset your password:</label>
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            id="email"
+            class="input input-bordered w-full text-white bg-gray-600 rounded-lg p-4 focus:ring-2 focus:ring-blue-500 transition ease-in-out duration-300"
+            required
+          />
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          class="w-full py-3 text-lg rounded-lg bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition ease-in-out duration-300"
         >
-          <div class="space-y-2">
-            <label for="email" class="text-lg text-gray-300"
-              >Enter your email to reset your password:</label
-            >
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              id="email"
-              class="input input-bordered w-full text-white bg-gray-600 rounded-lg p-4 focus:ring-2 focus:ring-blue-500 transition ease-in-out duration-300"
-              required
-            />
-          </div>
+          Send Verification Email
+        </button>
 
-          <!-- Submit Button -->
-          <div>
-            <button
-              type="submit"
-              class="w-full py-3 text-lg rounded-lg bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition ease-in-out duration-300"
-            >
-              Send Verification Email
-            </button>
-          </div>
+        <!-- Register & Login Links -->
+        <div class="text-sm text-gray-400">
+          <p>
+            Don't have an account?
+            <a href="/pages/register" class="text-blue-400 hover:underline">Register here</a>
+          </p>
+          <p>
+            Already have an account?
+            <a href="/pages/login" class="text-blue-400 hover:underline">Login here</a>
+          </p>
+        </div>
+      </form>
+    </div>
+  </section>
 
-          <!-- Register & Login Links -->
-          <div class="text-sm text-gray-400">
-            <p>
-              Don't have an account?
-              <a href="/pages/register" class="text-blue-400 hover:underline"
-                >Register here</a
-              >
-            </p>
-            <p>
-              Already have an account?
-              <a href="/pages/login" class="text-blue-400 hover:underline"
-                >Login here</a
-              >
-            </p>
-          </div>
-        </form>
-      </div>
-    </section>
+  <!-- Notyf Notification Logic -->
+  <script>
+    // Initialize Notyf
+    const notyf = new Notyf({
+      duration: 5000, // Notifications last 5 seconds
+    });
 
-    <!-- Notyf Notification Logic -->
-    <script>
-      // Initialize Notyf
-      const notyf = new Notyf({
-        duration: 5000, // Set duration to 5 seconds
-      });
+    // Get message and type from URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const message = urlParams.get("message");
+    const type = urlParams.get("type");
 
-      // Get message and type from URL parameters
-      const urlParams = new URLSearchParams(window.location.search);
-      const message = urlParams.get("message");
-      const type = urlParams.get("type");
-
-      // Show the notification if a message is provided
-      if (message && type) {
-        if (type === "success") {
-          notyf.success(message);
-        } else if (type === "error") {
-          notyf.error(message);
-        }
+    // Show the notification if a message is provided
+    if (message && type) {
+      if (type === "success") {
+        notyf.success(message);
+      } else if (type === "error") {
+        notyf.error(message);
       }
-    </script>
-  </body>
+    }
+  </script>
+
+</body>
 </html>

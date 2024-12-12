@@ -6,150 +6,202 @@ import asyncHandler from "../utils/asyncHandler.js";
 import formData from "form-data";
 import Mailgun from "mailgun.js";
 
-// Mailgun Configuration
 const mailgun = new Mailgun(formData);
 const mg = mailgun.client({
   username: "api",
   key: process.env.MAILGUN_API_KEY || "key-yourkeyhere",
 });
 
+if (!process.env.MAILGUN_API_KEY || !process.env.MAILGUN_DOMAIN) {
+  console.error("Mailgun environment variables are not properly set.");
+  process.exit(1);  // Exit the process if required environment variables are missing.
+}
+
+// Handle Email Verification Request
+// Handle Email Verification Request
 // Handle Email Verification Request
 export const requestEmailVerification = asyncHandler(async (req, res, next) => {
-  const { email } = req.body;
-
-  const user = await User.findOne({ email });
-  if (!user) {
-    return res.redirect(
-      `/pages/email-verification?message=User%20not%20found&type=error`
-    );
-  }
-
-  // Check if the user has exceeded the limit of password reset requests in the last hour
-  const lastRequestTime = user.lastPasswordResetRequest || new Date(0);
-  const timeDifference = Date.now() - lastRequestTime.getTime();
-  const requestsInLastHour = timeDifference < 3600000; // 1 hour = 3600000 ms
-
-  if (user.passwordResetRequests >= 3 && requestsInLastHour) {
-    return res.redirect(
-      `/pages/email-verification?message=You%20have%20reached%20the%20limit%20of%203%20password%20reset%20requests%20per%20hour&type=error`
-    );
-  }
-
-  // Generate verification token
-  const verificationToken = crypto.randomBytes(32).toString("hex");
-  user.emailVerificationToken = verificationToken;
-  user.emailVerificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
-  user.lastPasswordResetRequest = new Date();
-  user.passwordResetRequests = requestsInLastHour
-    ? user.passwordResetRequests + 1
-    : 1;
-  await user.save();
-
-  // Send email with verification link
-  const verificationUrl = `${req.protocol}://${req.get("host")}/pages/set-new-password?token=${verificationToken}&email=${email}`;
-
-  const emailData = {
-    from: "SDMConnect <no-reply@sdmConnect.com>",
-    to: [email],
-    subject: "Please Verify Your Email Address - SDMConnect",
-    text: `Hello,\n\nPlease verify your email address by clicking the link below to reset your password. If you did not request this, please ignore this email. If you have any concerns, don't hesitate to report it to us.\n\nVerification Link: ${verificationUrl}\n\nBest regards,\nSDMConnect Team`,
-    html: `
-      <html>
-        <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f7f7f7;">
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #f7f7f7; padding: 20px;">
-            <tr>
-              <td align="center" style="padding: 20px;">
-                <table role="presentation" style="max-width: 600px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); overflow: hidden;">
-                  <tr>
-                    <td style="background-color: #4caf50; padding: 20px; text-align: center;">
-                      <h1 style="color: #ffffff; margin: 0;">SDMConnect</h1>
-                      <p style="color: #ffffff; font-size: 16px;">Email Verification</p>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style="padding: 20px;">
-                      <p style="font-size: 18px; color: #333333;">Hello,</p>
-                      <p style="font-size: 16px; color: #555555;">We have received a request to verify your email address. Please click the link below to reset your password:</p>
-                      <p style="text-align: center;">
-                        <a href="${verificationUrl}" style="font-size: 16px; background-color: #4caf50; color: #ffffff; padding: 10px 20px; border-radius: 4px; text-decoration: none; display: inline-block;">Verify Your Email</a>
-                      </p>
-                      <p style="font-size: 16px; color: #555555;">If you did not request a password reset, please ignore this email. If you have any concerns, feel free to <a href="mailto:support@sdmconnect.com" style="color: #4caf50; text-decoration: none;">contact us</a>.</p>
-                      <p style="font-size: 14px; color: #777777;">Best regards,</p>
-                      <p style="font-size: 14px; color: #777777;">The SDMConnect Team</p>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style="background-color: #f4f4f4; padding: 10px; text-align: center;">
-                      <p style="font-size: 12px; color: #777777;">If you did not request this, you can safely ignore this email.</p>
-                      <p style="font-size: 12px; color: #777777;">&copy; 2024 SDMConnect. All rights reserved.</p>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-          </table>
-        </body>
-      </html>
-    `,
-  };
+  console.log("Received request for email verification");
 
   try {
-    await mg.messages.create(process.env.MAILGUN_DOMAIN, emailData);
-    return res.redirect(
-      `/pages/email-verification?message=Verification%20email%20sent&type=success`
-    );
+    const { email } = req.body;
+
+    console.log(`Request received to verify email: ${email}`);
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      console.error("User not found in database.");
+      return res.redirect(
+        `/pages/email-verification?message=User not found&type=error`
+      );
+    }
+
+    console.log("User found, generating verification token");
+
+    const verificationToken = crypto.randomBytes(32).toString("hex");
+    user.emailVerificationToken = verificationToken;
+    user.emailVerificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    user.lastPasswordResetRequest = new Date();
+    user.passwordResetRequests = 1;  // Just setting it to 1 as there's no limit now.
+
+    await user.save();
+
+    const verificationUrl = `${req.protocol}://${req.get(
+      "host"
+    )}/pages/set-new-password?token=${verificationToken}&email=${email}`;
+
+    const emailData = {
+      from: "SDMConnect <no-reply@sdmConnect.com>",
+      to: [email],
+      subject: "Please Verify Your Email Address - SDMConnect",
+      text: `Hello,
+
+Please verify your email address by clicking the link below to reset your password. If you did not request this, please ignore this email.
+
+Verification Link: ${verificationUrl}
+
+Best regards,
+SDMConnect Team`,
+      html: `
+        <html>
+          <head>
+            <style>
+              body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                padding: 20px;
+              }
+              .container {
+                max-width: 600px;
+                margin: 0 auto;
+                background-color: #fff;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 0 15px rgba(0,0,0,0.2);
+              }
+              .btn {
+                display: inline-block;
+                background: #4CAF50;
+                color: #fff;
+                padding: 15px 25px;
+                text-decoration: none;
+                font-weight: bold;
+                border-radius: 5px;
+                text-align: center;
+                transition: background 0.3s ease;
+              }
+              .btn:hover {
+                background: #45a049;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <h1>SDMConnect</h1>
+              <p>Hello <strong>${email}</strong>,</p>
+              <p>We received a request to verify your email address.</p>
+
+              <p>
+                <a href="${verificationUrl}" class="btn">Verify Your Email</a>
+              </p>
+
+              <p>If you did not request this password reset, please ignore this message.</p>
+
+              <p>Thank you for using <strong>SDMConnect</strong>.</p>
+            </div>
+          </body>
+        </html>
+      `,
+    };
+
+    console.log("Sending email via Mailgun");
+
+    try {
+      await mg.messages.create(process.env.MAILGUN_DOMAIN, emailData);
+      console.log("Verification email successfully sent.");
+      return res.redirect(
+        `/pages/email-verification?message=Verification email sent&type=success`
+      );
+    } catch (emailError) {
+      console.error("Failed to send email via Mailgun", emailError);
+      return next(new ApiError(500, "Failed to send verification email"));
+    }
   } catch (error) {
-    return next(new ApiError(500, "Failed to send verification email"));
+    console.error("An error occurred in requestEmailVerification:", error);
+    next(new ApiError(500, "Internal Server Error"));
   }
 });
 
-// Verify Email and Show Set New Password Page
+
+// Verify Email Token
 export const verifyEmail = asyncHandler(async (req, res, next) => {
   const { token, email } = req.query;
 
-  const user = await User.findOne({ email });
-  if (!user || user.emailVerificationToken !== token) {
-    return res.redirect(
-      `/pages/set-new-password?message=Invalid%20or%20expired%20token&type=error&email=${email}&token=${token}`
-    );
-  }
+  console.log(`Verifying email for token: ${token}, email: ${email}`);
 
-  if (new Date() > user.emailVerificationExpires) {
-    return res.redirect(
-      `/pages/set-new-password?message=Token%20expired&type=error&email=${email}&token=${token}`
-    );
-  }
+  try {
+    const user = await User.findOne({ email });
 
-  res.render("set-new-password", { email, token });
+    if (!user || user.emailVerificationToken !== token) {
+      console.error("Invalid or expired token.");
+      return res.redirect(
+        `/pages/set-new-password?message=Invalid or expired token&type=error`
+      );
+    }
+
+    if (new Date() > user.emailVerificationExpires) {
+      console.error("Token expired.");
+      return res.redirect(
+        `/pages/set-new-password?message=Token expired&type=error`
+      );
+    }
+
+    console.log("Token valid, rendering the new password view.");
+    res.render("set-new-password", { email, token });
+  } catch (error) {
+    console.error("An error occurred in verifyEmail:", error);
+    next(new ApiError(500, "Internal Server Error"));
+  }
 });
 
-// Set New Password and Redirect to Login
 export const setNewPassword = asyncHandler(async (req, res, next) => {
   const { email, token, newPassword } = req.body;
 
-  const user = await User.findOne({ email });
-  if (!user || user.emailVerificationToken !== token) {
+  console.log(`Setting new password for email: ${email}`);
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user || user.emailVerificationToken !== token) {
+      console.error("Invalid or expired token.");
+      return res.redirect(
+        `/pages/set-new-password?message=Invalid or expired token&type=error`
+      );
+    }
+
+    if (new Date() > user.emailVerificationExpires) {
+      console.error("Token expired.");
+      return res.redirect(
+        `/pages/set-new-password?message=Token expired&type=error`
+      );
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    user.emailVerificationToken = null;
+    user.emailVerificationExpires = null;
+    user.isVerified = true;
+    user.passwordResetRequests = 0;
+
+    await user.save();
+
+    console.log("Password reset successful.");
     return res.redirect(
-      `/pages/set-new-password?message=Invalid%20or%20expired%20token&type=error&email=${email}&token=${token}`
+      `/pages/success?message=Password reset successful&type=success`
     );
+  } catch (error) {
+    console.error("An error occurred while setting a new password:", error);
+    next(new ApiError(500, "Internal Server Error"));
   }
-
-  if (new Date() > user.emailVerificationExpires) {
-    return res.redirect(
-      `/pages/set-new-password?message=Token%20expired&type=error&email=${email}&token=${token}`
-    );
-  }
-
-  // Update password
-  const hashedPassword = await bcrypt.hash(newPassword, 10);
-  user.password = hashedPassword;
-  user.emailVerificationToken = null;
-  user.emailVerificationExpires = null;
-  user.isVerified = true;
-  user.passwordResetRequests = 0; // Reset password requests after a successful password reset
-  await user.save();
-
-  return res.redirect(
-    `/pages/success?message=Password%20reset%20successful!%20You%20can%20now%20log%20in&type=success`
-  );
 });
