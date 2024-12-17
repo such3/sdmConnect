@@ -1,34 +1,24 @@
 <link rel="stylesheet" href="/styles/dist-1.css" />
-<link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css"
-/>
-<!-- <script src="/scripts/login.js" type="module" defer></script> -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css" />
+
 <!-- Navbar -->
 <nav class="bg-gray-800 p-4">
-  <div class="main-container flex justify-between items-center">
+  <div class="max-w-screen-xl mx-auto flex justify-between items-center px-4">
+    <!-- Logo -->
     <a href="#" class="text-white text-2xl font-semibold">sdmConnect</a>
+
     <!-- Desktop Menu -->
     <div class="hidden md:flex space-x-6">
       <a href="/" class="text-white hover:text-blue-400">Home</a>
     </div>
 
-    <!-- Hamburger Menu -->
+    <!-- Hamburger Menu for mobile -->
     <div class="md:hidden">
-      <button class="btn btn-ghost text-white" id="menu-toggle">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M4 6h16M4 12h16M4 18h16"
-          ></path>
+      <button class="text-white" id="menu-toggle">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
         </svg>
       </button>
     </div>
@@ -42,14 +32,13 @@
   </div>
 </nav>
 
-<!-- Login Form -->
-<section class="py-16 bg-gray-800">
-  <div class="max-w-3xl mx-auto bg-gray-700 p-12 rounded-lg shadow-xl">
-    <h2 class="text-3xl font-bold text-white mb-8 text-center">
-      Login to Your Account
-    </h2>
+<!-- Login Form Section -->
+<section class="py-12 md:py-16 bg-gray-800">
+  <div class="max-w-screen-sm mx-auto bg-gray-700 p-6 md:p-12 rounded-xl shadow-xl">
+    <h2 class="text-3xl font-bold text-white mb-8 text-center">Login to Your Account</h2>
 
     <form action="/api/v1/users/login" method="POST" class="space-y-6">
+      
       <!-- Email Field -->
       <div class="space-y-2">
         <label for="email" class="text-lg text-gray-300">Email</label>
@@ -58,7 +47,7 @@
           name="email"
           placeholder="Email"
           id="email"
-          class="input input-bordered w-full text-white bg-gray-600 rounded-lg p-4 focus:ring-2 focus:ring-blue-500 transition ease-in-out duration-300"
+          class="w-full p-4 text-white bg-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition duration-300"
           required
         />
       </div>
@@ -71,7 +60,7 @@
           name="password"
           placeholder="Password"
           id="password"
-          class="input input-bordered w-full text-white bg-gray-600 rounded-lg p-4 focus:ring-2 focus:ring-blue-500 transition ease-in-out duration-300"
+          class="w-full p-4 text-white bg-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition duration-300"
           required
         />
       </div>
@@ -80,34 +69,38 @@
       <div>
         <button
           type="submit"
-          class="btn btn-primary w-full py-3 text-lg rounded-lg bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition ease-in-out duration-300"
+          class="w-full py-3 text-lg rounded-lg bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition ease-in-out duration-300"
         >
           Login
         </button>
       </div>
 
-      <!-- Register Link -->
-      <div class="text-sm text-gray-400">
+      <!-- Register and Forgot Password Links -->
+      <div class="text-sm text-gray-400 space-y-2">
         <p>
           Don't have an account?
-          <a href="/pages/register" class="text-blue-400 hover:underline"
-            >Register here</a
-          >
+          <a href="/pages/register" class="text-blue-400 hover:underline">Register here</a>
         </p>
         <p>
           Forgot Password ?
-          <a
-            href="/pages/email-verification"
-            class="text-blue-400 hover:underline"
-            >Reset Here</a
-          >
+          <a href="/pages/email-verification" class="text-blue-400 hover:underline">Reset Here</a>
         </p>
       </div>
     </form>
   </div>
 </section>
-<script src="/scripts/login.js"></script>
 
+<script src="/scripts/login.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
 
 <%- include('../partials/footer') %>
+
+<!-- Script for Mobile Menu Toggle -->
+<script>
+  const menuToggle = document.getElementById("menu-toggle");
+  const mobileMenu = document.getElementById("mobile-menu");
+
+  menuToggle.addEventListener("click", () => {
+    mobileMenu.classList.toggle("hidden");
+  });
+</script>

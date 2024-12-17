@@ -14,9 +14,24 @@
   <nav class="bg-gray-800 p-4 shadow-md">
     <div class="container mx-auto flex justify-between items-center">
       <a href="/" class="text-white text-3xl font-bold hover:text-blue-500 transition-all">sdmConnect</a>
-      <ul class="flex space-x-6 text-lg">
+      <ul class="hidden md:flex space-x-6 text-lg">
         <li><a href="/pages/upload" class="hover:text-blue-500 transition-all">Upload</a></li>
         <li><a href="/pages/profile" class="hover:text-blue-500 transition-all">Profile</a></li>
+      </ul>
+      <!-- Hamburger Menu for Mobile -->
+      <div class="md:hidden">
+        <button class="text-white" id="menu-toggle">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <!-- Mobile Menu -->
+    <div class="md:hidden hidden" id="mobile-menu">
+      <ul class="space-y-4 py-4 px-6">
+        <li><a href="/pages/upload" class="block text-white hover:text-blue-500 transition-all">Upload</a></li>
+        <li><a href="/pages/profile" class="block text-white hover:text-blue-500 transition-all">Profile</a></li>
       </ul>
     </div>
   </nav>
@@ -31,7 +46,7 @@
   <!-- Filters Section -->
   <section class="bg-gray-800 p-6 mt-8 rounded-lg shadow-xl">
     <div class="max-w-7xl mx-auto">
-      <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         
         <!-- Semester Filter -->
         <div class="flex flex-col space-y-2">
@@ -66,7 +81,7 @@
       </div>
 
       <!-- Button Container -->
-      <div class="mt-6 flex justify-between items-center">
+      <div class="mt-6 flex justify-between items-center flex-col sm:flex-row">
         <!-- Apply Filters Button -->
         <button onclick="applySearchAndFilter()" class="bg-blue-500 text-white py-3 px-6 rounded-md w-full sm:w-auto hover:bg-blue-600 transition-all">Apply Search & Filters</button>
         
@@ -142,6 +157,11 @@
       const searchQuery = document.getElementById("search").value;
       window.location.href = `/pages/resources?page=1&semester=${semester}&branch=${branch}&searchQuery=${searchQuery}`;
     }
+
+    // Toggle Mobile Menu
+    document.getElementById('menu-toggle').addEventListener('click', () => {
+      document.getElementById('mobile-menu').classList.toggle('hidden');
+    });
   </script>
 </body>
 
