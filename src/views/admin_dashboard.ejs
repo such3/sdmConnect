@@ -27,40 +27,38 @@
       <div>
         <a href="/" class="text-gray-300 hover:text-blue-500 mx-4">Home</a>
         <a href="/pages/profile" class="text-gray-300 hover:text-blue-500 mx-4">Profile</a>
-        <a href="#" class="text-gray-300 hover:text-blue-500 mx-4">Manage</a>
-        
       </div>
     </div>
   </nav>
 
   <!-- Dashboard Summary -->
   <section class="w-full mt-8 p-6 bg-gray-800 rounded-lg shadow-lg">
-    <h2 class="text-2xl font-bold mb-6">Dashboard Overview</h2>
+    <h2 class="text-3xl font-semibold mb-6 text-center text-blue-400">Dashboard Overview</h2>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <!-- Total Resources -->
-      <div class="bg-gray-700 p-6 rounded-lg shadow-lg transform transition-all hover:scale-105">
-        <h3 class="text-lg font-medium">Total Resources Published</h3>
-        <p class="text-4xl font-bold mt-2"><%= totalResources %></p>
+      <div class="bg-gray-700 p-6 rounded-lg shadow-lg transform transition-all hover:scale-105 hover:bg-gray-600">
+        <h3 class="text-xl font-medium text-blue-300">Total Resources Published</h3>
+        <p class="text-4xl font-bold mt-2 text-white"><%= totalResources %></p>
       </div>
 
       <!-- Total Contributors -->
-      <div class="bg-gray-700 p-6 rounded-lg shadow-lg transform transition-all hover:scale-105">
-        <h3 class="text-lg font-medium">Total Contributors</h3>
-        <p class="text-4xl font-bold mt-2"><%= totalContributors %></p>
+      <div class="bg-gray-700 p-6 rounded-lg shadow-lg transform transition-all hover:scale-105 hover:bg-gray-600">
+        <h3 class="text-xl font-medium text-blue-300">Total Contributors</h3>
+        <p class="text-4xl font-bold mt-2 text-white"><%= totalContributors %></p>
       </div>
     </div>
   </section>
 
   <!-- Resources Per Branch (Cards) -->
   <section class="w-full mt-8 p-6 bg-gray-800 rounded-lg shadow-lg">
-    <h2 class="text-2xl font-bold mb-6">Resources Per Branch</h2>
+    <h2 class="text-3xl font-semibold mb-6 text-center text-blue-400">Resources Per Branch</h2>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <% resourcesPerBranch.forEach(branch => { %>
-        <div class="bg-gray-700 p-6 rounded-lg shadow-lg transform transition-all hover:scale-105">
-          <p><strong>Branch:</strong> <%= branch.name %></p>
-          <p><strong>Total Resources:</strong> <%= branch.total %></p>
+        <div class="bg-gray-700 p-6 rounded-lg shadow-lg transform transition-all hover:scale-105 hover:bg-gray-600">
+          <p class="font-semibold text-xl text-white"><strong>Branch:</strong> <%= branch.name %></p>
+          <p class="text-lg text-gray-300"><strong>Total Resources:</strong> <%= branch.total %></p>
         </div>
       <% }) %>
     </div>
@@ -68,13 +66,13 @@
 
   <!-- Resources Per Semester (Cards) -->
   <section class="w-full mt-8 p-6 bg-gray-800 rounded-lg shadow-lg">
-    <h2 class="text-2xl font-bold mb-6">Resources Per Semester</h2>
+    <h2 class="text-3xl font-semibold mb-6 text-center text-blue-400">Resources Per Semester</h2>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <% resourcesPerSemester.forEach(sem => { %>
-        <div class="bg-gray-700 p-6 rounded-lg shadow-lg transform transition-all hover:scale-105">
-          <p><strong>Semester <%= sem.id %>:</strong></p>
-          <p><strong>Total Resources:</strong> <%= sem.total %></p>
+        <div class="bg-gray-700 p-6 rounded-lg shadow-lg transform transition-all hover:scale-105 hover:bg-gray-600">
+          <p class="font-semibold text-xl text-white"><strong>Semester <%= sem.id %>:</strong></p>
+          <p class="text-lg text-gray-300"><strong>Total Resources:</strong> <%= sem.total %></p>
         </div>
       <% }) %>
     </div>
@@ -82,18 +80,18 @@
 
   <!-- Top Contributors -->
   <section class="w-full mt-8 p-6 bg-gray-800 rounded-lg shadow-lg">
-    <h2 class="text-2xl font-bold mb-6">Top Contributors</h2>
+    <h2 class="text-3xl font-semibold mb-6 text-center text-blue-400">Top Contributors</h2>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <% topContributors.forEach(contributor => { %>
-        <div class="bg-gray-700 p-6 rounded-lg shadow-lg transform transition-all hover:scale-105 flex items-center">
+        <div class="bg-gray-700 p-6 rounded-lg shadow-lg transform transition-all hover:scale-105 hover:bg-gray-600 flex items-center">
           <div class="w-12 h-12 rounded-full overflow-hidden mr-4">
             <img src="<%= contributor.avatar %>" alt="Avatar" class="w-full h-full object-cover">
           </div>
           <div>
-            <p class="font-semibold text-lg"><%= contributor.fullName %></p>
+            <p class="font-semibold text-lg text-white"><%= contributor.fullName %></p>
             <p class="text-gray-400">@<%= contributor.username %></p>
-            <p><strong>Resources:</strong> <%= contributor.totalResources %></p>
+            <p class="text-gray-300"><strong>Resources:</strong> <%= contributor.totalResources %></p>
           </div>
         </div>
       <% }) %>
@@ -102,7 +100,7 @@
 
   <!-- Chart Section -->
   <section class="w-full mt-8 p-6 bg-gray-800 rounded-lg shadow-lg">
-    <h2 class="text-2xl font-bold mb-6">Resource Trends</h2>
+    <h2 class="text-3xl font-semibold mb-6 text-center text-blue-400">Resource Trends</h2>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="w-full flex justify-center items-center">
