@@ -3,7 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { User } from "../models/user.model.js";
 import mongoose from "mongoose";
-
+import app from "../app.js"
 // Middleware to verify the access token and authorize the user
 export const verifyJWT = asyncHandler(async (req, res, next) => {
   try {
@@ -47,6 +47,7 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
     // If user is not found, throw an error (Invalid Access Token)
     if (!user) {
       throw new ApiError(404, "User Not Found: Invalid Access Token");
+      res.render('error',{error});
     }
 
     // Step 5: Attach the user to the request object for future use

@@ -174,6 +174,7 @@ const getSingleResource = asyncHandler(async (req, res) => {
       .populate("owner", "fullName username avatar") // Populate the owner's details
       .exec();
 
+      // console.log(resource.data);
     // Check if the resource exists
     if (!resource) {
       console.error(`Resource with slug ${resourceSlug} not found.`);
